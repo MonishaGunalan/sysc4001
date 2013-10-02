@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0667E91B-06D1-4E69-844F-34F3BADEF6FF</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Assignment 1</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>09044760-DA77-40B1-8867-3E11ED29BCE4</key>
+		<string>https://github.com/koreyconway/sysc4001</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Assignment 1/Assignment 1.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>09044760-DA77-40B1-8867-3E11ED29BCE4</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/koreyconway/sysc4001</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>09044760-DA77-40B1-8867-3E11ED29BCE4</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>09044760-DA77-40B1-8867-3E11ED29BCE4</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Assignments</string>
+		</dict>
+	</array>
+</dict>
+</plist>
