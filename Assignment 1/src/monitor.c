@@ -13,10 +13,10 @@
 int child_pid;
 int child_done = 0; // set to 1 to tell child to stop
 
-struct fifo_data controller_data {
-	int heartbeat_rate,
-	int pid
-};
+struct fifo_data {
+	int heartbeat_rate;
+	int pid;
+} controller_data;
 
 int main(int argc, const char * argv[])
 {
@@ -25,15 +25,15 @@ int main(int argc, const char * argv[])
 	return 0;
 }
 
-void start_child(fifo_data data) {
+void start_child(struct fifo_data *data) {
 	// fork here
 }
 
 void end_child() {
 	// if we are child
-		// close ourselves
+	// close ourselves
 	// if we are parent
-		// send signal to child to close
+	// send signal to child to close
 }
 
 void create_controller_fifo() {
