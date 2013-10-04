@@ -9,6 +9,8 @@
 #include <stdio.h>
 
 #define INTERVAL 2
+#define MAX_HEARTBEAT 100
+#define MIN_HEARTBEAT 60
 
 int child_pid;
 int child_done = 0; // set to 1 to tell child to stop
@@ -27,6 +29,10 @@ int main(int argc, const char * argv[])
 
 void start_child(struct fifo_data *data) {
 	// fork here
+    
+    // Generate random number for heartbeat rate
+    int r = (rand() %(MAX_HEARTBEAT - MIN_HEARTBEAT)) + MIN_HEARTBEAT;
+    printf( "random number =  %d \n", r);
 }
 
 void end_child() {
