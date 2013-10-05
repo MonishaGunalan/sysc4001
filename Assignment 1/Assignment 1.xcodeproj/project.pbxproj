@@ -27,6 +27,7 @@
 				0C156B6517FBA28F00D0A682 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		0C156B6517FBA28F00D0A682 /* Products */ = {
 			isa = PBXGroup;
