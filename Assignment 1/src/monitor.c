@@ -37,9 +37,11 @@ int main(int argc, const char * argv[])
 
 void start_child(struct fifo_data *data) {
 	// fork here
+	
+	// Intializes random number generator
+	srand((unsigned)time(NULL));
     
     // Generate random number for heartbeat rate
-	srand(45);
     int r = (rand() %(MAX_HEARTBEAT - MIN_HEARTBEAT)) + MIN_HEARTBEAT;
     printf("random number =  %d \n", r);
 }
