@@ -10,12 +10,27 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "common.h"
 #include "monitor.h"
 
 int main(int argc, const char * argv[])
 {
+	// Get the patient name
+	if (argc <= 1) {
+		printf("Patient name: ");
+		size_t buff_size;
+		char* buffer;
+		getline(&buffer, &buff_size, stdin);
+		strncpy(patient_name, buffer, NAME_MAX_LENGTH);
+	} else {
+		strncpy(patient_name, argv[1], NAME_MAX_LENGTH);
+	}
+	
+	dump("Starting monitor for patient: %s", patient_name);
+	
+	// Setup child/parent processes
 	setup_common(&running, parent_main, child_main);
 	return 0;
 }
@@ -25,11 +40,11 @@ void parent_main() {
 	
 	// Parent's main loop
 	while(running) {
-		printf("I am parent\n");
+		dump("I am parent");
 		sleep(1);
 	}
 	
-	printf("\nParent terminated\n");
+	dump("Parent terminated");
 }
 
 void child_main() {
@@ -40,11 +55,11 @@ void child_main() {
 	while(running) {
 		// Generate random number for heartbeat rate
 		int r = (rand() %(HEARTBEAT_MAX - HEARTBEAT_MIN)) + HEARTBEAT_MIN;
-		printf("Heartbeat: %d \n", r);
+		dump("Heartbeat: %d ", r);
 		sleep(HEARTBEAT_INTERVAL);
 	}
 
-	printf("\nChild terminated\n");
+	dump("Child terminated");
 }
 
 

@@ -5,7 +5,7 @@ Monitor
 -------
 
 Parent:
-- Get patient name from command line argument
+- Get patient name from command line argument or interactive prompt
 - Sends connect request to controller (FIFO)
 - Waits to receive start message (FIFO)
 - Starts child heartbeat monitor

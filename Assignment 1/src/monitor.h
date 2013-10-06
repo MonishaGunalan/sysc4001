@@ -20,11 +20,7 @@ void parent_main(void);
 void child_main(void);
 
 // Variables
-bool running = true; // used to exit main loops
-
-struct fifo_data {
-	int heartbeat_rate;
-	int pid;
-} controller_data;
+static bool running = true; // used to exit main loops
+static char patient_name[NAME_MAX_LENGTH];
 
 #endif

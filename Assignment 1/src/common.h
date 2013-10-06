@@ -10,6 +10,7 @@
 
 // Public Functions
 void setup_common(bool* running, void(*parent_main)(void), void(*child_main)(void));
+void dump(const char * format, ...);
 
 // Private Functions
 static void setup_signal_handling(void);
@@ -18,7 +19,7 @@ static bool is_parent();
 static void terminate();
 
 // Private variables
-static pid_t cm_child_pid;
+static pid_t cm_child_pid = -1;
 static bool* cm_running;
 
 #endif
