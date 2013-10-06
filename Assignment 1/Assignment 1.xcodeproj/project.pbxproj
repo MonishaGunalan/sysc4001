@@ -7,11 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C274A561801ABDF002F1339 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C274A551801ABDF002F1339 /* common.c */; };
+		0C274A571801ABDF002F1339 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C274A551801ABDF002F1339 /* common.c */; };
 		0C597E0717FF45E10095426F /* controller.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C8F88FA17FF441D00E773E6 /* controller.c */; };
 		0C597E0817FF45E40095426F /* monitor.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C8F88FB17FF444100E773E6 /* monitor.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C274A551801ABDF002F1339 /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = common.c; path = src/common.c; sourceTree = "<group>"; };
+		0C274A581801AC1B002F1339 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = src/common.h; sourceTree = "<group>"; };
+		0C274A591801AC74002F1339 /* monitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = monitor.h; path = src/monitor.h; sourceTree = "<group>"; };
 		0C6E82B617FBA3DA00155565 /* controller */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = controller; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C6E82C417FBA43B00155565 /* monitor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = monitor; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C8F88FA17FF441D00E773E6 /* controller.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = controller.c; path = src/controller.c; sourceTree = "<group>"; usesTabs = 1; };
@@ -22,7 +27,10 @@
 		0C156B5B17FBA28F00D0A682 = {
 			isa = PBXGroup;
 			children = (
+				0C274A551801ABDF002F1339 /* common.c */,
 				0C8F88FB17FF444100E773E6 /* monitor.c */,
+				0C274A591801AC74002F1339 /* monitor.h */,
+				0C274A581801AC1B002F1339 /* common.h */,
 				0C8F88FA17FF441D00E773E6 /* controller.c */,
 				0C156B6517FBA28F00D0A682 /* Products */,
 			);
@@ -103,6 +111,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C274A561801ABDF002F1339 /* common.c in Sources */,
 				0C597E0717FF45E10095426F /* controller.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -111,6 +120,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C274A571801ABDF002F1339 /* common.c in Sources */,
 				0C597E0817FF45E40095426F /* monitor.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -123,7 +133,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -145,11 +155,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -162,7 +171,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -179,11 +188,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
 				SYMROOT = bin;

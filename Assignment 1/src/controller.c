@@ -1,3 +1,10 @@
+//
+//  SYSC 4001 - Assignment 1
+//  Monisha Gunalan (100871444)
+//  Korey Conway (100838924)
+//  October 2013
+//
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
