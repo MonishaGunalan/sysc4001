@@ -9,14 +9,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <stdbool.h>
 
-#define INTERVAL 2
-#define MAX_HEARTBEAT 100
-#define MIN_HEARTBEAT 60
+#define HEARTBEAT_INTERVAL 2
+#define HEARTBEAT_MAX 100
+#define HEARTBEAT_MIN 60
 #define RAND_SEED (unsigned) time(NULL)
 
-int child_pid;
-int child_done = 0; // set to 1 to tell child to stop
+void parent_main(void);
+void child_main(void);
+void handle_signal(int sigid);
+bool is_parent(void);
+
+pid_t child_pid;
+int terminating = 0; // set to 1 to tell child to stop
 
 struct fifo_data {
 	int heartbeat_rate;
@@ -25,35 +34,78 @@ struct fifo_data {
 
 int main(int argc, const char * argv[])
 {
-	// insert code here...
-	printf("Hello, World!\n");
-	srand(RAND_SEED);
-	for (int i = 0; i < 5; i++) {
-		int r = (rand() %(MAX_HEARTBEAT - MIN_HEARTBEAT)) + MIN_HEARTBEAT;
-		printf("random number =  %d \n", r);
+	// Setup signal listening
+	struct sigaction act = {
+		.sa_handler = handle_signal,
+		.sa_flags = 0
+	};
+	sigemptyset(&act.sa_mask);
+	sigaction(SIGINT, &act, 0);
+	sigaction(SIGTERM, &act, 0);
+	
+	// Fork the child
+	child_pid = fork();
+	switch(child_pid) {
+		case -1: // fork failed
+			perror("Fork failed");
+			exit(1);
+		case 0: // child
+			child_main();
+			break;
+		default: // parent
+			parent_main();
+			break;
 	}
+	
 	return 0;
 }
 
-void start_child(struct fifo_data *data) {
-	// fork here
+void parent_main() {
+	while(!terminating) {
+		printf("I am parent\n");
+		sleep(1);
+	}
 	
+	printf("\nParent terminated\n");
+}
+
+void child_main() {
 	// Intializes random number generator
-	srand((unsigned)time(NULL));
-    
-    // Generate random number for heartbeat rate
-    int r = (rand() %(MAX_HEARTBEAT - MIN_HEARTBEAT)) + MIN_HEARTBEAT;
-    printf("random number =  %d \n", r);
-}
-
-void end_child() {
-	// if we are child
-	// close ourselves
-	// if we are parent
-	// send signal to child to close
-}
-
-void create_controller_fifo() {
+	srand(RAND_SEED);
 	
+	// Child's main loop
+	while(!terminating) {
+		// Generate random number for heartbeat rate
+		int r = (rand() %(HEARTBEAT_MAX - HEARTBEAT_MIN)) + HEARTBEAT_MIN;
+		printf("Heartbeat: %d \n", r);
+		sleep(HEARTBEAT_INTERVAL);
+	}
+
+	printf("\nChild terminated\n");
 }
+
+bool is_parent() {
+	return (child_pid > 0);
+}
+
+void terminate() {
+	terminating = 1;
+
+	if (is_parent()) {
+		// Send signal to child to close
+		kill(child_pid, SIGTERM);
+	}
+}
+
+void handle_signal(int sigid) {
+	switch(sigid) {
+		case SIGTERM:
+		case SIGINT:
+			terminate();
+		default:
+			// Ignore other signals
+			break;
+	}
+}
+
 
