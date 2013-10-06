@@ -70,8 +70,7 @@ static void setup_signal_handling() {
 			.sa_flags = 0
 		};
 		sigemptyset(&ignore_act.sa_mask);
-//		sigaction(SIGINT, &ignore_act, 0);
-		sigaction(SIGINT, &handle_act, 0);
+		sigaction(SIGINT, &ignore_act, 0);
 		sigaction(SIGTERM, &handle_act, 0);
 	}
 }
@@ -98,6 +97,6 @@ static void terminate() {
 	if (is_parent()) {
 		// Send signal to child to close
 		dump("Sending SIGTERM to child process");
-		//kill(cm_child_pid, SIGTERM);
+		kill(cm_child_pid, SIGTERM);
 	}
 }
