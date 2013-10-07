@@ -78,15 +78,15 @@ static bool is_parent() {
 
 static void setup_signal_handling() {
 	// Setup signal listening
+	dump("Setup signal handling");
+
 	struct sigaction handle_act = {
 		.sa_handler = handle_signal,
 		.sa_flags = 0
 	};
+	
 	sigemptyset(&handle_act.sa_mask);
-	
 
-	dump("Setup signal handling");
-	
 	if (is_parent()) {
 		sigaction(SIGINT, &handle_act, 0);
 		sigaction(SIGTERM, &handle_act, 0);
@@ -104,17 +104,17 @@ static void setup_signal_handling() {
 static void handle_signal(int sigid) {
 	if (SIGTERM == sigid) {
 		dump("Received SIGTERM");
-		end_main_loop();
+		end_loop();
 	} else if (SIGINT == sigid) {
 		dump("Received SIGINT");
-		end_main_loop();
+		end_loop();
 	} else {
 		// Ignore other signals
 		dump("Received unknown signal: %d", sigid);
 	}
 }
 
-static void end_main_loop() {
+static void end_loop() {
 	running = false;
 	
 	if (is_parent() && child_pid != -1) {

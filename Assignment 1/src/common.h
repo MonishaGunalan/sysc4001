@@ -41,7 +41,7 @@ void dump(const char * format, ...);
 static void setup_signal_handling(void);
 static void handle_signal(int sigid);
 static bool is_parent();
-static void end_main_loop(void);
+static void end_loop(void);
 static void run_process(process_t process);
 
 

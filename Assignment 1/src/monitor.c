@@ -21,12 +21,14 @@ int main(int argc, const char * argv[])
 {
 	// Get the patient name
 	if (argc <= 1) {
+		// Name not given in argv, so prompt user for it
 		printf("Patient name: ");
 		size_t buff_size;
 		char* buffer;
 		getline(&buffer, &buff_size, stdin);
 		strncpy(patient_name, buffer, NAME_MAX_LENGTH);
 	} else {
+		// Get name from argv
 		strncpy(patient_name, argv[1], NAME_MAX_LENGTH);
 	}
 	
@@ -67,7 +69,7 @@ bool child_setup() {
 	// Get message queues
 	controller_queue_id = msgget(CONTROLLER_MESSAGE_QUEUE_KEY, 0666);
 	monitor_queue_id = msgget(MONITOR_MESSAGE_QUEUE_KEY, 0666);
-	
+		
 	// Verify queues are valid
 	if (controller_queue_id == -1) {
 		dump("Cannot open controller queue. Is controller running?");
@@ -90,7 +92,7 @@ void child_loop() {
 	dump("Heartbeat: %d ", heartbeat);
 	
 	// Send to controller's message queue
-	dump("Sending heartbeat to monitor");
+	dump("Sending heartbeat to controller");
 	msg_to_send.heartbeat = heartbeat;
 	msgsnd(controller_queue_id, &msg_to_send, sizeof(msg_to_send.heartbeat), 0);
 	
