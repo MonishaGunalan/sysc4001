@@ -13,23 +13,31 @@
 #include <stdarg.h>
 #include "common.h"
 
-void setup_common(bool* running, void(*parent_main)(), void(*child_main)()) {
+void start_processes(process_t parent, process_t child) {
 	// Fork the child
-	cm_running = running;
-	*cm_running = true;
-	cm_child_pid = fork();
-	switch(cm_child_pid) {
+	child_pid = fork();
+	switch(child_pid) {
 		case -1: // fork failed
 			perror("Fork failed");
 			exit(1);
 		case 0: // child
 			setup_signal_handling();
-			child_main();
+			run_process(child);
 			break;
 		default: // parent
 			setup_signal_handling();
-			parent_main();
+			run_process(parent);
 			break;
+	}
+}
+
+void send_sigterm_to_parent() {
+	dump("Sending SIGTERM to parent process");
+
+	if (is_parent()) {
+		kill(getpid(), SIGTERM);
+	} else {
+		kill(getppid(), SIGTERM);
 	}
 }
 
@@ -49,8 +57,23 @@ void dump(const char * format, ...) {
 	va_end(args);
 }
 
+static void run_process(process_t process) {
+	bool setup_ok = (process.setup) ? process.setup() : true;
+	
+	if (setup_ok && process.loop) {
+		running = true;
+		while(running) {
+			process.loop();
+		}
+	}
+	
+	if (process.cleanup) {
+		process.cleanup();
+	}
+}
+
 static bool is_parent() {
-	return (cm_child_pid != 0);
+	return (child_pid != 0);
 }
 
 static void setup_signal_handling() {
@@ -60,6 +83,9 @@ static void setup_signal_handling() {
 		.sa_flags = 0
 	};
 	sigemptyset(&handle_act.sa_mask);
+	
+
+	dump("Setup signal handling");
 	
 	if (is_parent()) {
 		sigaction(SIGINT, &handle_act, 0);
@@ -76,27 +102,24 @@ static void setup_signal_handling() {
 }
 
 static void handle_signal(int sigid) {
-	switch(sigid) {
-		case SIGTERM:
-		case SIGINT:
-			if (sigid == SIGTERM) {
-				dump("Received SIGTERM");
-			} else if (sigid == SIGINT) {
-				dump("Received SIGINT");
-			}
-			terminate();
-		default:
-			// Ignore other signals
-			break;
+	if (SIGTERM == sigid) {
+		dump("Received SIGTERM");
+		end_main_loop();
+	} else if (SIGINT == sigid) {
+		dump("Received SIGINT");
+		end_main_loop();
+	} else {
+		// Ignore other signals
+		dump("Received unknown signal: %d", sigid);
 	}
 }
 
-static void terminate() {
-	*cm_running = false;
+static void end_main_loop() {
+	running = false;
 	
-	if (is_parent()) {
+	if (is_parent() && child_pid != -1) {
 		// Send signal to child to close
 		dump("Sending SIGTERM to child process");
-		kill(cm_child_pid, SIGTERM);
+		kill(child_pid, SIGTERM);
 	}
 }
