@@ -13,6 +13,7 @@
 #define MONITOR_FIFO_NAME "./fifo.monitor.%d"
 #define MONITOR_FIFO_NAME_MAX_LENGTH sizeof(MONITOR_FIFO_NAME) + 5
 #define MESSAGE_QUEUE_KEY 5555
+#define NAME_MAX_LENGTH 50
 
 // Public types
 typedef struct process_t {
@@ -27,6 +28,7 @@ typedef struct msg_data {
         int source_key;
 		int heartbeat;
 		bool ack;
+		char patient_name[NAME_MAX_LENGTH];
 	} data;
 } msg_data;
 

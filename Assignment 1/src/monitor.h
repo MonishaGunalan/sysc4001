@@ -13,7 +13,6 @@
 #define HEARTBEAT_MAX 100
 #define HEARTBEAT_MIN 60
 #define RAND_SEED (unsigned) time(NULL)
-#define NAME_MAX_LENGTH 50
 
 // Functions
 bool parent_init(void);

@@ -181,6 +181,7 @@ void child_loop() {
 			.ack = false,
 		}
 	};
+	strcpy(msg.data.patient_name, patient_name);
 	
 	if (-1 == msgsnd(msg_queue_id, &msg, sizeof(msg.data), 0)) {
 		dump("Error sending message in queue");

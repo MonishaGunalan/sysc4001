@@ -167,7 +167,7 @@ void child_loop() {
 	dump("Reading from the message queue");
 	msgrcv(msg_queue_id, &msg, sizeof(msg.data), getpid(), 0);
 
-	dump("Received heartbeat: %d from ...", msg.data.heartbeat);
+	dump("Received heartbeat: %d from %s", msg.data.heartbeat, msg.data.patient_name);
 
 	dump("Sending ack back to monitor");
 	msg_data response_msg = {
@@ -176,6 +176,7 @@ void child_loop() {
 			.source_key = getpid(),
 			.heartbeat = 0,
 			.ack = true,
+			.patient_name = "",
 		},
 	};
 	msgsnd(msg_queue_id, &response_msg, sizeof(msg.data), 0);
