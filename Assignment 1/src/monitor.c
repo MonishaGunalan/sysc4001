@@ -12,8 +12,10 @@
 #include <stdbool.h>
 #include <string.h>
 #include <sys/msg.h>
+#include <sys/stat.h>
 #include <signal.h>
-
+#include <fcntl.h>
+#include <errno.h>
 #include "common.h"
 #include "monitor.h"
 
@@ -32,6 +34,11 @@ int main(int argc, const char * argv[])
 		strncpy(patient_name, argv[1], NAME_MAX_LENGTH);
 	}
 	
+	if (false == parent_init()) {
+		dump("Finished");
+		return 1;
+	}
+	
 	dump("Starting monitor for patient: %s", patient_name);
 	
 	// Setup child/parent processes
@@ -47,18 +54,99 @@ int main(int argc, const char * argv[])
 		.cleanup = child_cleanup,
 	};
 	
-	start_processes(parent, child);
+	start_fork(parent, child);
 	
 	return 0;
 }
 
+bool parent_init() {
+	// Open FIFO to controller
+	dump("Opening controller FIFO");
+	int controller_fifo_fd = open(CONTROLLER_FIFO_NAME, O_WRONLY);
+	if (-1 == controller_fifo_fd) {
+		dump("Failed to open controller fifo with error: %d", errno);
+		return false;
+	}
+	
+	// Create FIFO for listening for this monitor
+	sprintf(monitor_fifo_name, MONITOR_FIFO_NAME, getpid());
+	dump("Creating fifo for monitor to read: %s", monitor_fifo_name);
+	if (-1 == mkfifo(monitor_fifo_name, 0777)) {
+		unlink(monitor_fifo_name);
+		dump("Failed to create fifo with error: %d", errno);
+		return false;
+	}
+
+	// Send request to connect with controller
+	dump("Sending request to connect with controller");
+	fifo_data fdata;
+	fdata.source_pid = getpid();
+	fdata.request_type = CONNECT;
+	write(controller_fifo_fd, &fdata, sizeof(fdata));
+	
+	// Wait to get response from controller
+	dump("Waiting for response from controller");
+	int monitor_fifo_fd = open(monitor_fifo_name, O_RDONLY);
+	if (-1 == monitor_fifo_fd) {
+		unlink(monitor_fifo_name);
+		dump("Failed to open monitor fifo with error: %d", errno);
+		return false;
+	}
+	
+	// Read the response
+	if (-1 == read(monitor_fifo_fd, &fdata, sizeof(fdata))) {
+		unlink(monitor_fifo_name);
+		dump("Failed to read monitor fifo with error: %d", errno);
+		return false;
+	}
+	
+	// Check if we got the go ahead
+	switch(fdata.request_type) {
+		case START:
+			controller_key = fdata.source_pid;
+			dump("Received start command from controller");
+			return true;
+		default:
+			dump("Invalid response received from controller");
+			return false;
+	}
+	
+	return true;
+}
+
 void parent_loop() {
-	// Parent's main loop
-	dump("I am parent");
-	sleep(1);
+	// Wait to get instruction from controller
+	dump("Waiting for instruction from controller");
+	int monitor_fifo_fd = open(monitor_fifo_name, O_RDONLY);
+	if (-1 == monitor_fifo_fd) {
+		unlink(monitor_fifo_name);
+		dump("Failed to open monitor fifo with error: %d", errno);
+		return;
+	}
+	
+	// Read the response
+	fifo_data fdata;
+	if (-1 == read(monitor_fifo_fd, &fdata, sizeof(fdata))) {
+		unlink(monitor_fifo_name);
+		dump("Failed to read monitor fifo with error: %d", errno);
+		return;
+	}
+	
+	// Check if we got the go ahead
+	switch(fdata.request_type) {
+		case STOP:
+			dump("Received stop command from controller");
+			send_sigterm_to_parent();
+			return;
+		default:
+			dump("Invalid response received from controller");
+			return;
+	}
 }
 
 void parent_cleanup() {
+	// Delete the monitor fifo
+	unlink(monitor_fifo_name);
 	dump("Parent finished");
 }
 
@@ -66,23 +154,15 @@ bool child_setup() {
 	// Child setup
 	srand(RAND_SEED); // Intializes random number generator
 
-	// Get message queues
-	controller_queue_id = msgget(CONTROLLER_MESSAGE_QUEUE_KEY, 0666);
-	monitor_queue_id = msgget(MONITOR_MESSAGE_QUEUE_KEY, 0666);
-		
-	// Verify queues are valid
-	if (controller_queue_id == -1) {
+	// Get message queue
+	msg_queue_id = msgget(MESSAGE_QUEUE_KEY, 0666);
+	if (msg_queue_id == -1) {
+		// Invalid message queue
 		dump("Cannot open controller queue. Is controller running?");
-		send_sigterm_to_parent(); // Kill the monitor
-		return false;
-	} else if (monitor_queue_id == -1) {
-		dump("Cannot open monitor queue. Is controller running?");
-		send_sigterm_to_parent(); // Kill the monitor
+		send_sigterm_to_parent(); // Tell parent to stop
 		return false;
 	}
 
-	// Initialize msg to be sent to controller
-	msg_to_send.msg_key = getpid();
 	return true;
 }
 
@@ -93,13 +173,28 @@ void child_loop() {
 	
 	// Send to controller's message queue
 	dump("Sending heartbeat to controller");
-	msg_to_send.heartbeat = heartbeat;
-	msgsnd(controller_queue_id, &msg_to_send, sizeof(msg_to_send.heartbeat), 0);
+	msg_data msg = {
+		.destination_key = controller_key,
+		.data = {
+			.source_key = getpid(),
+			.heartbeat = heartbeat,
+			.ack = false,
+		}
+	};
+	
+	if (-1 == msgsnd(msg_queue_id, &msg, sizeof(msg.data), 0)) {
+		dump("Error sending message in queue");
+		return;
+	}
 	
 	// Wait for ack
 	dump("Waiting for ACK");
-	msgrcv(monitor_queue_id, &received_msg, sizeof(received_msg.ack), getpid(), 0);
-	if (received_msg.ack) {
+	if (-1 == msgrcv(msg_queue_id, &msg, sizeof(msg.data), getpid(), 0)) {
+		dump("Error receiving message in queue");
+		return;
+	}
+
+	if (msg.data.ack) {
 		dump("ACK received");
 	} else {
 		dump("ACK received with error");

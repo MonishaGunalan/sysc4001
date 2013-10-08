@@ -21,6 +21,7 @@
 		0C6E82C417FBA43B00155565 /* monitor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = monitor; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C8F88FA17FF441D00E773E6 /* controller.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = controller.c; path = src/controller.c; sourceTree = "<group>"; usesTabs = 1; };
 		0C8F88FB17FF444100E773E6 /* monitor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = monitor.c; path = src/monitor.c; sourceTree = "<group>"; usesTabs = 1; };
+		0CC0EBFC18032F2E00EF465F /* controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = controller.h; path = src/controller.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -32,6 +33,7 @@
 				0C274A591801AC74002F1339 /* monitor.h */,
 				0C274A581801AC1B002F1339 /* common.h */,
 				0C8F88FA17FF441D00E773E6 /* controller.c */,
+				0CC0EBFC18032F2E00EF465F /* controller.h */,
 				0C156B6517FBA28F00D0A682 /* Products */,
 			);
 			sourceTree = "<group>";

@@ -13,7 +13,7 @@
 #include <stdarg.h>
 #include "common.h"
 
-void start_processes(process_t parent, process_t child) {
+void start_fork(process_t parent, process_t child) {
 	// Fork the child
 	child_pid = fork();
 	switch(child_pid) {
@@ -55,6 +55,10 @@ void dump(const char * format, ...) {
 	printf("\n");
 	
 	va_end(args);
+}
+
+int get_child_pid() {
+	return (int)child_pid;
 }
 
 static void run_process(process_t process) {

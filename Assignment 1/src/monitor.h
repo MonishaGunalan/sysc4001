@@ -14,10 +14,9 @@
 #define HEARTBEAT_MIN 60
 #define RAND_SEED (unsigned) time(NULL)
 #define NAME_MAX_LENGTH 50
-#define CONTROLLER_MESSAGE_QUEUE_KEY 5555
-#define MONITOR_MESSAGE_QUEUE_KEY 4444
 
 // Functions
+bool parent_init(void);
 void parent_loop(void);
 void parent_cleanup(void);
 bool child_setup(void);
@@ -26,8 +25,9 @@ void child_cleanup(void);
 
 // Variables
 static char patient_name[NAME_MAX_LENGTH];
-static int controller_queue_id = -1;
-static int monitor_queue_id = -1;
-static controller_msg msg_to_send;
-static monitor_msg received_msg;
+static int msg_queue_id = -1;
+int controller_key;
+char monitor_fifo_name[MONITOR_FIFO_NAME_MAX_LENGTH];
+
+
 #endif

@@ -9,7 +9,7 @@ monitor: make_temp_dir common
 	gcc -o ./bin/monitor ./bin/temp/monitor.o ./bin/temp/common.o
 	
 controller: make_temp_dir common
-	gcc -c ./src/controller.c
+	gcc -o ./bin/temp/controller.o -c ./src/controller.c
 	gcc -o ./bin/controller ./bin/temp/controller.o ./bin/temp/common.o
 
 common: make_temp_dir
@@ -19,3 +19,5 @@ clean:
 	-rm ./bin/monitor
 	-rm ./bin/controller
 	-rm -rf ./bin/temp
+	-rm ./bin/fifo.controller
+
