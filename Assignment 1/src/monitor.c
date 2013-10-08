@@ -19,8 +19,18 @@
 #include "common.h"
 #include "monitor.h"
 
+// Variables
+static char patient_name[NAME_MAX_LENGTH];
+static int msg_queue_id = -1;
+int controller_key;
+char monitor_fifo_name[MONITOR_FIFO_NAME_MAX_LENGTH];
+bool running = true;
+
 int main(int argc, const char * argv[])
 {
+	// Setup listening to SIGTERM
+	setup_signal_handling(SIGTERM, handle_signal);
+	
 	// Get the patient name
 	if (argc <= 1) {
 		// Name not given in argv, so prompt user for it
@@ -34,32 +44,19 @@ int main(int argc, const char * argv[])
 		strncpy(patient_name, argv[1], NAME_MAX_LENGTH);
 	}
 	
-	if (false == parent_init()) {
+	if (false == init()) {
 		dump("Finished");
 		return 1;
 	}
 	
 	dump("Starting monitor for patient: %s", patient_name);
 	
-	// Setup child/parent processes
-	process_t parent = {
-		.setup = 0,
-		.loop = parent_loop,
-		.cleanup = parent_cleanup,
-	};
-	
-	process_t child = {
-		.setup = child_setup,
-		.loop = child_loop,
-		.cleanup = child_cleanup,
-	};
-	
-	start_fork(parent, child);
+	fork_process(parent_main, child_main);
 	
 	return 0;
 }
 
-bool parent_init() {
+bool init() {
 	// Open FIFO to controller
 	dump("Opening controller FIFO");
 	int controller_fifo_fd = open(CONTROLLER_FIFO_NAME, O_WRONLY);
@@ -114,6 +111,16 @@ bool parent_init() {
 	return true;
 }
 
+void parent_main() {
+	while(running) {
+		parent_loop();
+	}
+	
+	// Delete the monitor fifo
+	unlink(monitor_fifo_name);
+	dump("Parent finished");
+}
+
 void parent_loop() {
 	// Wait to get instruction from controller
 	dump("Waiting for instruction from controller");
@@ -136,7 +143,7 @@ void parent_loop() {
 	switch(fdata.request_type) {
 		case STOP:
 			dump("Received stop command from controller");
-			send_sigterm_to_parent();
+			send_signal(SIGTERM, true);
 			return;
 		default:
 			dump("Invalid response received from controller");
@@ -144,13 +151,10 @@ void parent_loop() {
 	}
 }
 
-void parent_cleanup() {
-	// Delete the monitor fifo
-	unlink(monitor_fifo_name);
-	dump("Parent finished");
-}
+void child_main() {
+	// Ignore control-C in child
+	setup_signal_handling(SIGINT, SIG_IGN);
 
-bool child_setup() {
 	// Child setup
 	srand(RAND_SEED); // Intializes random number generator
 
@@ -159,11 +163,16 @@ bool child_setup() {
 	if (msg_queue_id == -1) {
 		// Invalid message queue
 		dump("Cannot open controller queue. Is controller running?");
-		send_sigterm_to_parent(); // Tell parent to stop
-		return false;
+		send_signal(SIGTERM, true); // Tell parent to stop
+		return;
 	}
-
-	return true;
+	
+	// Start loop
+	while(running) {
+		child_loop();
+	}
+	
+	dump("Child finished");
 }
 
 void child_loop() {
@@ -205,7 +214,23 @@ void child_loop() {
 	sleep(HEARTBEAT_INTERVAL);
 }
 
-void child_cleanup() {
-	dump("Child finished");
+void handle_signal(int sigtype) {
+	if (SIGINT == sigtype) {
+		dump("Received SIGINT signal");
+		running = false;
+		
+		if (is_parent()) {
+			send_signal(SIGTERM, false);
+		}
+	} else if (SIGTERM == sigtype) {
+		dump("Received SIGTERM signal");
+		running = false;
+
+		if (is_parent()) {
+			send_signal(SIGTERM, false);
+		}
+} else {
+		dump("Received unknown signal. Ignoring it");
+	}
 }
 

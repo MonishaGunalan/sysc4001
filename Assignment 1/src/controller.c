@@ -18,34 +18,32 @@
 #include "common.h"
 #include "controller.h"
 
+// Variables
+int controller_fifo_fd = -1;
+int msg_queue_id = -1;
+int monitor_pid[MAX_MONITORS];
+int monitor_count = 0;
+bool running = true;
+
 int main(int argc, const char * argv[])
 {
 	// Init
-	if (false == parent_init()) {
+	if (false == init()) {
 		dump("Finshed");
 		return 1;
 	}
 	
-	// Setup child/parent process functions
-	process_t parent = {
-		.setup = 0,
-		.loop = parent_loop,
-		.cleanup = parent_cleanup,
-	};
-	
-	process_t child = {
-		.setup = child_setup,
-		.loop = child_loop,
-		.cleanup = child_cleanup,
-	};
-	
 	// For the 2 processes, and handle the signals and main loops
-	start_fork(parent, child);
+	fork_process(parent_main, child_main);
 
     return 0;
 }
 
-bool parent_init() {
+bool init() {
+	// Setup inital signal handling
+	setup_signal_handling(SIGINT, handle_signal);
+	setup_signal_handling(SIGTERM, handle_signal);
+
 	// Create controller FIFO
 	if (-1 == mkfifo(CONTROLLER_FIFO_NAME, 0777)) {
 		dump("Failed to create controller FIFO with error: %d", errno);
@@ -61,6 +59,21 @@ bool parent_init() {
 	}
 	
 	return true;
+}
+
+void parent_main() {
+	while(running) {
+		parent_loop();
+	}
+	
+	int i;
+	for(i = 0; i < monitor_count; i++) {
+		close_monitor(monitor_pid[i]);
+	}
+	
+	unlink(CONTROLLER_FIFO_NAME);
+	dump("Finished");
+
 }
 
 void parent_loop() {
@@ -116,15 +129,6 @@ void parent_loop() {
 	}
 }
 
-void parent_cleanup() {
-	for(int i = 0; i < monitor_count; i++) {
-		close_monitor(monitor_pid[i]);
-	}
-	
-	unlink(CONTROLLER_FIFO_NAME);
-	dump("Finished");
-}
-
 void close_monitor(int monitor_pid) {
 	// Open FIFO for monitor to respond
 	char monitor_fifo_name[MONITOR_FIFO_NAME_MAX_LENGTH];
@@ -149,15 +153,24 @@ void close_monitor(int monitor_pid) {
 }
 
 
-bool child_setup() {
+void child_main() {
+	// Ignore control-C in child
+	setup_signal_handling(SIGINT, SIG_IGN);
+
+	// Create the message queue
 	msg_queue_id = msgget(MESSAGE_QUEUE_KEY, 0666 | IPC_CREAT);
 	if (msg_queue_id == -1) {
 		// Invalid message queue
 		dump("Failed to open/create controller queue.");
-		send_sigterm_to_parent(); // Tell parent to stop
-		return false;
+		send_signal(SIGTERM, true);
+		return;
 	}
-	return true;
+	
+	while(running) {
+		child_loop();
+	}
+	
+	dump("Finished");
 }
 
 void child_loop() {
@@ -182,7 +195,24 @@ void child_loop() {
 	msgsnd(msg_queue_id, &response_msg, sizeof(msg.data), 0);
 }
 
-void child_cleanup() {
-	dump("Finished");
+void handle_signal(int sigtype) {
+	if (SIGINT == sigtype) {
+		dump("Received SIGINT signal");
+		running = false;
+		
+		if (is_parent()) {
+			send_signal(SIGTERM, false);
+		}
+	} else if (SIGTERM == sigtype) {
+		dump("Received SIGTERM signal");
+		running = false;
+		
+		if (is_parent()) {
+			send_signal(SIGTERM, false);
+		}
+	} else {
+		dump("Received unknown signal. Ignoring it");
+	}
 }
+
 
