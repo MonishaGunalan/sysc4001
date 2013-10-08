@@ -15,18 +15,10 @@
 #define RAND_SEED (unsigned) time(NULL)
 
 // Functions
-bool parent_init(void);
+bool init(void);
+void parent_main(void);
 void parent_loop(void);
-void parent_cleanup(void);
-bool child_setup(void);
+void child_main(void);
 void child_loop(void);
-void child_cleanup(void);
-
-// Variables
-static char patient_name[NAME_MAX_LENGTH];
-static int msg_queue_id = -1;
-int controller_key;
-char monitor_fifo_name[MONITOR_FIFO_NAME_MAX_LENGTH];
-
-
+void handle_signal(int sigtype);
 #endif

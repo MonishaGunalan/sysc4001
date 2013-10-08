@@ -15,7 +15,7 @@
 #define MESSAGE_QUEUE_KEY 5555
 #define NAME_MAX_LENGTH 50
 
-// Public types
+// Data Types
 typedef struct process_t {
 	bool(*setup)();
 	void(*loop)();
@@ -43,26 +43,14 @@ typedef struct fifo_data {
 } fifo_data;
 
 
-// Public variables
-static pid_t child_pid = -1;
 
-// Private variables
-static bool running = false;
-
-
-// Public Functions
-void start_fork(process_t parent, process_t child);
-void send_sigterm_to_parent(void);
+// Functions
+void fork_process(void(*parent_main)(), void(*child_main)());
 void dump(const char * format, ...);
-int get_child_pid(void);
-
-
-// Private Functions
-static void setup_signal_handling(void);
-static void handle_signal(int sigid);
-static bool is_parent();
-static void end_loop(void);
-static void run_process(process_t process);
-
-
+bool is_parent(void);
+void setup_signal_handling(int sigtype, void(*handler)());
+void send_signal(int signal_type, bool parent);
+pid_t get_parent_pid(void);
+pid_t get_child_pid(void);
+char* get_signal_name(int sigtype);
 #endif
