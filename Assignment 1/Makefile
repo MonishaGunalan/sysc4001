@@ -19,5 +19,5 @@ clean:
 	-rm ./bin/monitor
 	-rm ./bin/controller
 	-rm -rf ./bin/temp
-	-rm ./bin/fifo.controller
+	-rm ./bin/fifo.*
 
