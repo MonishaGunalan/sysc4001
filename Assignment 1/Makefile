@@ -2,6 +2,7 @@
 all: monitor controller
 
 make_temp_dir:
+	-mkdir ./bin
 	-mkdir ./bin/temp	
 	
 monitor: make_temp_dir common
