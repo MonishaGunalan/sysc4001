@@ -71,6 +71,7 @@ void parent_main() {
 		close_monitor(monitor_pid[i]);
 	}
 	
+	dump("Removing fifo file: %s", CONTROLLER_FIFO_NAME);
 	unlink(CONTROLLER_FIFO_NAME);
 	dump("Finished");
 
@@ -178,7 +179,11 @@ void child_loop() {
 	
 	// Read from message queue
 	dump("Reading from the message queue");
-	msgrcv(msg_queue_id, &msg, sizeof(msg.data), getpid(), 0);
+	
+	if (-1 == msgrcv(msg_queue_id, &msg, sizeof(msg.data), getpid(), 0)) {
+		dump("Failed to receive from message queue with error: %d", errno);
+		return;
+	}
 
 	dump("Received heartbeat: %d from %s", msg.data.heartbeat, msg.data.patient_name);
 
@@ -192,7 +197,13 @@ void child_loop() {
 			.patient_name = "",
 		},
 	};
-	msgsnd(msg_queue_id, &response_msg, sizeof(msg.data), 0);
+	
+	// Sending ack back message to monitor
+	if( -1 == msgsnd(msg_queue_id, &response_msg, sizeof(msg.data), 0)) {
+		dump("Failed to send from message queue with error: %d", errno);
+		return;
+	}
+
 }
 
 void handle_signal(int sigtype) {

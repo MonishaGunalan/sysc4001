@@ -52,4 +52,5 @@ void setup_signal_handling(int sigtype, void(*handler)());
 void send_signal(int signal_type, bool parent);
 pid_t get_parent_pid(void);
 pid_t get_child_pid(void);
+char* get_signal_name(int sigtype);
 #endif

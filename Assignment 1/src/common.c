@@ -58,22 +58,8 @@ bool is_parent() {
 	return (getpid() == get_parent_pid());
 }
 
-// Setup the signal handler for a signal type
-void setup_signal_handling(int sigtype, void(*handler)(int)) {
-	// Setup signal listening
-	dump("Setup signal handling for signal type: %d", sigtype);
-
-	struct sigaction handle_act = {
-		.sa_handler = handler,
-		.sa_flags = 0
-	};
-	
-	sigemptyset(&handle_act.sa_mask);
-	sigaction(sigtype, &handle_act, 0);
-}
-
-// Send a signal to either parent or child
-void send_signal(int sigtype, bool parent_is_destination) {
+// Convert a signal type to string
+char* get_signal_name(int sigtype) {
 	char *signame;
 	
 	switch(sigtype) {
@@ -86,6 +72,27 @@ void send_signal(int sigtype, bool parent_is_destination) {
 		default:
 			signame = "UNKNOWN";
 	}
+	return signame;
+}
+
+// Setup the signal handler for a signal type
+void setup_signal_handling(int sigtype, void(*handler)(int)) {
+	// Setup signal listening
+	char *signame = get_signal_name(sigtype);
+	dump("Setup signal handling for signal type: %s", signame);
+
+	struct sigaction handle_act = {
+		.sa_handler = handler,
+		.sa_flags = 0
+	};
+	
+	sigemptyset(&handle_act.sa_mask);
+	sigaction(sigtype, &handle_act, 0);
+}
+
+// Send a signal to either parent or child
+void send_signal(int sigtype, bool parent_is_destination) {
+	char *signame = get_signal_name(sigtype);
 	
 	if (parent_is_destination) {
 		dump("Sending %s signal to parent process", signame);
@@ -105,6 +112,7 @@ void send_signal(int sigtype, bool parent_is_destination) {
 	}
 }
 
+// Get the parent pid
 pid_t get_parent_pid() {
 	if (-1 == parent_pid) {
 		parent_pid = getpid();
@@ -113,6 +121,7 @@ pid_t get_parent_pid() {
 	return parent_pid;
 }
 
+// Get the child pid
 pid_t get_child_pid() {
 	if (is_parent()) {
 		return child_pid;

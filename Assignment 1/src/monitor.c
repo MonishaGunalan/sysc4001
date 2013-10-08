@@ -112,11 +112,15 @@ bool init() {
 }
 
 void parent_main() {
+	// Ignore control-C in child
+	setup_signal_handling(SIGINT, SIG_IGN);
+
 	while(running) {
 		parent_loop();
 	}
 	
 	// Delete the monitor fifo
+	dump("Removing fifo file: %s", monitor_fifo_name);
 	unlink(monitor_fifo_name);
 	dump("Parent finished");
 }
@@ -193,14 +197,14 @@ void child_loop() {
 	strcpy(msg.data.patient_name, patient_name);
 	
 	if (-1 == msgsnd(msg_queue_id, &msg, sizeof(msg.data), 0)) {
-		dump("Error sending message in queue");
+		dump("Failed to send from message queue with error: %d", errno);
 		return;
 	}
 	
 	// Wait for ack
 	dump("Waiting for ACK");
 	if (-1 == msgrcv(msg_queue_id, &msg, sizeof(msg.data), getpid(), 0)) {
-		dump("Error receiving message in queue");
+		dump("Failed to receive from message queue with error: %d", errno);
 		return;
 	}
 
