@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 #include <fcntl.h>
+#include <signal.h>
 #include "common.h"
 #include "controller.h"
 
