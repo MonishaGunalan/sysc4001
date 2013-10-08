@@ -5,12 +5,15 @@ Compile Instructions
 --------------------
 
 To compile the monitor, run:
+	
 	make monitor
 	
 To compile the controller, run:
+	
 	make controller
 	
 To compile all, run:
+	
 	make all
 
 
@@ -18,17 +21,19 @@ Run Instructions
 ----------------
 
 To run controller:
+	
 	$ ./bin/controller
 
 To run monitor:
+	
 	$ ./bin/monitor "Patient Name" [starting_heart_rate]
 	
 	eg. $ ./bin/monitor "James Bond" 65
 
 Notes:
-	- run controller and monitor in different terminals
-	- controller must be running before starting monitors
-	- limitation set to max 25 monitors
+- run controller and monitor in different terminals
+- controller must be running before starting monitors
+- limitation set to max 25 monitors
 
 	
 
