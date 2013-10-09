@@ -12,7 +12,7 @@
 #define CONTROLLER_FIFO_NAME "./fifo.controller"
 #define MONITOR_FIFO_NAME "./fifo.monitor.%d"
 #define MONITOR_FIFO_NAME_MAX_LENGTH sizeof(MONITOR_FIFO_NAME) + 5
-#define MESSAGE_QUEUE_KEY 5555
+#define MESSAGE_QUEUE_KEY ftok(CONTROLLER_FIFO_NAME, 5555)
 #define NAME_MAX_LENGTH 50
 
 // Data Types

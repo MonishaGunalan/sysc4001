@@ -161,6 +161,7 @@ void child_main() {
 
 	// Create the message queue
 	msg_queue_id = msgget(MESSAGE_QUEUE_KEY, 0666 | IPC_CREAT);
+	
 	if (msg_queue_id == -1) {
 		// Invalid message queue
 		dump("Failed to open/create controller queue.");
@@ -170,6 +171,12 @@ void child_main() {
 	
 	while(running) {
 		child_loop();
+	}
+	
+	// Delete the message queue
+	dump("Removing message queue");
+	if (-1 == msgctl(msg_queue_id, IPC_RMID, 0)) {
+		dump("Failde to delete message queue");
 	}
 	
 	dump("Finished");
@@ -188,7 +195,7 @@ void child_loop() {
 
 	dump("Received heartbeat: %d from %s", msg.data.heartbeat, msg.data.patient_name);
 
-	dump("Sending ack back to monitor");
+	dump("Sending ack back to monitor\n");
 	msg_data response_msg = {
 		.destination_key = msg.data.source_key,
 		.data = {

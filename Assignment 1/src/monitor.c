@@ -182,7 +182,7 @@ void child_main() {
 void child_loop() {
 	// Generate random number for heartbeat rate
 	int heartbeat = (rand() %(HEARTBEAT_MAX - HEARTBEAT_MIN)) + HEARTBEAT_MIN;
-	dump("Heartbeat: %d ", heartbeat);
+	dump("Heartbeat for %s: %d ", patient_name, heartbeat);
 	
 	// Send to controller's message queue
 	dump("Sending heartbeat to controller");
@@ -209,9 +209,9 @@ void child_loop() {
 	}
 
 	if (msg.data.ack) {
-		dump("ACK received");
+		dump("ACK received\n");
 	} else {
-		dump("ACK received with error");
+		dump("ACK received with error\n");
 	}
 	
 	// Sleep for hearbeat interval
