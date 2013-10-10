@@ -36,9 +36,18 @@ int main(int argc, const char * argv[])
 		// Name not given in argv, so prompt user for it
 		printf("Patient name: ");
 		size_t buff_size;
+		int n;
 		char* buffer;
 		getline(&buffer, &buff_size, stdin);
-		strncpy(patient_name, buffer, NAME_MAX_LENGTH);
+		
+		if (strlen(buffer) > NAME_MAX_LENGTH) {
+			n = NAME_MAX_LENGTH;
+		} else {
+			n = (int)strlen(buffer) - 1;
+		}
+		
+		buffer[buff_size-2] = 0;
+		strncpy(patient_name, buffer, n);
 	} else {
 		// Get name from argv
 		strncpy(patient_name, argv[1], NAME_MAX_LENGTH);
