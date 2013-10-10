@@ -84,14 +84,19 @@ void parent_loop() {
 	// Open FIFO (blocks until monitor connects)
 	controller_fifo_fd = open(CONTROLLER_FIFO_NAME, O_RDONLY);
 	if (-1 == controller_fifo_fd) {
-		dump("[warn] Failed to open fifo with error: %d", errno);
+		if (EINTR != errno) {
+			dump("[warn] Failed to open fifo with error: %d", errno);
+		}
 		return;
 	}
 
 	// Read from controller FIFO
 	fifo_data fdata;
 	if (-1 == read(controller_fifo_fd, &fdata, sizeof(fdata))) {
-		// Error reading from fifo, just ignore and continue next request
+		// Error reading from fifo, just warn and continue next request
+		if (EINTR != errno) {
+			dump("[warn] Failed to read fifo with error: %d", errno);
+		}
 		return;
 	}
 	
@@ -176,7 +181,7 @@ void child_main() {
 	// Delete the message queue
 	dump("Removing message queue");
 	if (-1 == msgctl(msg_queue_id, IPC_RMID, 0)) {
-		dump("Failde to delete message queue");
+		dump("Failed to delete message queue");
 	}
 	
 	dump("Finished");
@@ -189,7 +194,9 @@ void child_loop() {
 	dump("Reading from the message queue");
 	
 	if (-1 == msgrcv(msg_queue_id, &msg, sizeof(msg.data), getpid(), 0)) {
-		dump("Failed to receive from message queue with error: %d", errno);
+		if (EINTR != errno) {
+			dump("Failed to receive from message queue with error: %d", errno);
+		}
 		return;
 	}
 
@@ -208,7 +215,9 @@ void child_loop() {
 	
 	// Sending ack back message to monitor
 	if( -1 == msgsnd(msg_queue_id, &response_msg, sizeof(msg.data), 0)) {
-		dump("Failed to send from message queue with error: %d", errno);
+		if (EINTR != errno) {
+			dump("Failed to send from message queue with error: %d", errno);
+		}
 		return;
 	}
 

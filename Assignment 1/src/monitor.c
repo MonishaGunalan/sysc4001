@@ -61,7 +61,8 @@ bool init() {
 	dump("Opening controller FIFO");
 	int controller_fifo_fd = open(CONTROLLER_FIFO_NAME, O_WRONLY);
 	if (-1 == controller_fifo_fd) {
-		dump("Failed to open controller fifo with error: %d", errno);
+		dump("Failed to open controller fifo with error: %d. Is controller"
+			 " running?", errno);
 		return false;
 	}
 	
@@ -86,14 +87,18 @@ bool init() {
 	int monitor_fifo_fd = open(monitor_fifo_name, O_RDONLY);
 	if (-1 == monitor_fifo_fd) {
 		unlink(monitor_fifo_name);
-		dump("Failed to open monitor fifo with error: %d", errno);
+		if (EINTR != errno) {
+			dump("Failed to open monitor fifo with error: %d", errno);
+		}
 		return false;
 	}
 	
 	// Read the response
 	if (-1 == read(monitor_fifo_fd, &fdata, sizeof(fdata))) {
 		unlink(monitor_fifo_name);
-		dump("Failed to read monitor fifo with error: %d", errno);
+		if (EINTR != errno) {
+			dump("Failed to read monitor fifo with error: %d", errno);
+		}
 		return false;
 	}
 	
@@ -131,7 +136,9 @@ void parent_loop() {
 	int monitor_fifo_fd = open(monitor_fifo_name, O_RDONLY);
 	if (-1 == monitor_fifo_fd) {
 		unlink(monitor_fifo_name);
-		dump("Failed to open monitor fifo with error: %d", errno);
+		if (EINTR != errno) {
+			dump("Failed to open monitor fifo with error: %d", errno);
+		}
 		return;
 	}
 	
@@ -139,7 +146,9 @@ void parent_loop() {
 	fifo_data fdata;
 	if (-1 == read(monitor_fifo_fd, &fdata, sizeof(fdata))) {
 		unlink(monitor_fifo_name);
-		dump("Failed to read monitor fifo with error: %d", errno);
+		if (EINTR != errno) {
+			dump("Failed to read monitor fifo with error: %d", errno);
+		}
 		return;
 	}
 	
@@ -197,14 +206,18 @@ void child_loop() {
 	strcpy(msg.data.patient_name, patient_name);
 	
 	if (-1 == msgsnd(msg_queue_id, &msg, sizeof(msg.data), 0)) {
-		dump("Failed to send from message queue with error: %d", errno);
+		if (EINTR != errno) {
+			dump("Failed to send from message queue with error: %d", errno);
+		}
 		return;
 	}
 	
 	// Wait for ack
 	dump("Waiting for ACK");
 	if (-1 == msgrcv(msg_queue_id, &msg, sizeof(msg.data), getpid(), 0)) {
-		dump("Failed to receive from message queue with error: %d", errno);
+		if (EINTR != errno) {
+			dump("Failed to receive from message queue with error: %d", errno);
+		}
 		return;
 	}
 
@@ -233,7 +246,7 @@ void handle_signal(int sigtype) {
 		if (is_parent()) {
 			send_signal(SIGTERM, false);
 		}
-} else {
+	} else {
 		dump("Received unknown signal. Ignoring it");
 	}
 }
