@@ -1,6 +1,11 @@
 Assignment 1
 ============
 
+Authors
+-------
+- Monisha Gunalan (100871444)
+- Korey Conway (100838924)
+
 Compile Instructions
 --------------------
 
@@ -26,9 +31,9 @@ To run controller:
 
 To run monitor:
 	
-	$ ./bin/monitor "Patient Name" [starting_heart_rate]
+	$ ./bin/monitor "Patient Name"
 	
-	eg. $ ./bin/monitor "James Bond" 65
+	eg. $ ./bin/monitor "James Bond"
 
 Notes:
 - run controller and monitor in different terminals
@@ -68,5 +73,4 @@ Child:
 - Wait to receive message from monitor (Message Queue)
 - Prints info on console (PID, patient name, heartbeat)
 - Responds back with an ACK to monitor (Message Queue)
-
 
