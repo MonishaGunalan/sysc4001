@@ -87,6 +87,7 @@
 		0C113FB51827FA0C00181C42 /* iteration1_consumer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iteration1_consumer; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C113FC21827FA2B00181C42 /* iteration2_consumer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iteration2_consumer; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C113FCF1827FA3600181C42 /* iteration3_consumer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iteration3_consumer; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C113FDB18283DD900181C42 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				0C113F7D1827F4FC00181C42 /* consumer_common.h */,
+				0C113FDB18283DD900181C42 /* common.h */,
 				0C113F7E1827F4FC00181C42 /* iteration1_consumer.c */,
 				0C113F7F1827F4FC00181C42 /* iteration1_producer.c */,
 				0C113F801827F4FC00181C42 /* iteration2_consumer.c */,

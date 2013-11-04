@@ -5,5 +5,9 @@
 // November 2013
 //
 
+#ifndef SYSC_4001_Assignment_2_consumer_common_h
+#define SYSC_4001_Assignment_2_consumer_common_h
+
 void start(int number_of_consumers);
 
+#endif

@@ -5,4 +5,9 @@
 // November 2013
 //
 
+#ifndef SYSC_4001_Assignment_2_producer_common_h
+#define SYSC_4001_Assignment_2_producer_common_h
+
 void start(int number_of_producers, int number_of_entries);
+
+#endif
