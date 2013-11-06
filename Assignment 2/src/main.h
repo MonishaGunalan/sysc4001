@@ -8,9 +8,12 @@
 #ifndef SYSC_4001_Assignment_2_main_h
 #define SYSC_4001_Assignment_2_main_h
 
-#define RAND_SEED (unsigned) time(NULL)
+#include <sys/types.h> // needed for pid_t type
 
-#include <sys/types.h>
+#define RAND_SEED (unsigned) time(NULL)
+#define ENTRIES_PER_PRODUCER 20
+
+
 pid_t fork_producer(int iteration, int producer_id);
 pid_t fork_consumer(int iteration, int consumer_id);
 

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "main.h"
 #include "buffer.h"
+#include "semaphore.h"
 #include "iteration1.h"
 
 void start_producer1(int producer_id)
@@ -23,7 +24,13 @@ void start_consumer1(int consumer_id)
 void run_alternative1(int buffer_size, int number_of_producers, int number_of_consumers)
 {
     // Initialize semaphores
-    // TODO
+    // Notes:
+    //  - S is for mutual exclusion of the buffer
+    //  - N is to synchronize the current number of items in the buffer
+    //  - E is to synchronzie the number of empty items
+    sem_s = semaphore_create(SEMAPHORE_S, 1);
+    sem_n = semaphore_create(SEMAPHORE_N, 0);
+    sem_e = semaphore_create(SEMAPHORE_E, buffer_size);
     
     // Initialize shared buffer
     buffer_init(buffer_size);
