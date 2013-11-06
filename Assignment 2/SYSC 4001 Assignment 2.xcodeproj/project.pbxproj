@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0C10D27E182A837C006951DB /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C10D26D182A7E92006951DB /* main.c */; };
+		0CEBDA3D182A9DC9007B0CED /* buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CEBDA3C182A9DC9007B0CED /* buffer.c */; };
+		0CEBDA40182A9DDE007B0CED /* iteration1.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CEBDA3F182A9DDE007B0CED /* iteration1.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,6 +28,10 @@
 		0C10D26D182A7E92006951DB /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		0C10D26E182A7EA5006951DB /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		0C10D275182A8371006951DB /* main */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = main; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CEBDA3C182A9DC9007B0CED /* buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buffer.c; sourceTree = "<group>"; };
+		0CEBDA3E182A9DD4007B0CED /* buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
+		0CEBDA3F182A9DDE007B0CED /* iteration1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iteration1.c; sourceTree = "<group>"; };
+		0CEBDA41182A9DE8007B0CED /* iteration1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iteration1.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +66,10 @@
 			children = (
 				0C10D26D182A7E92006951DB /* main.c */,
 				0C10D26E182A7EA5006951DB /* main.h */,
+				0CEBDA3C182A9DC9007B0CED /* buffer.c */,
+				0CEBDA3E182A9DD4007B0CED /* buffer.h */,
+				0CEBDA3F182A9DDE007B0CED /* iteration1.c */,
+				0CEBDA41182A9DE8007B0CED /* iteration1.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -116,6 +126,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C10D27E182A837C006951DB /* main.c in Sources */,
+				0CEBDA3D182A9DC9007B0CED /* buffer.c in Sources */,
+				0CEBDA40182A9DDE007B0CED /* iteration1.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,6 +243,7 @@
 				0C10D27D182A8372006951DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
