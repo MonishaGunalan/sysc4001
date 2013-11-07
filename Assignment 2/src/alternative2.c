@@ -75,9 +75,9 @@ void start_producer2(int producer_id)
         
         // Add value into buffer
         int value = generate_producer_value(producer_id);
-        verbose("Producer %d: putting %d into buffer", producer_id, value);
-        buffer_add(value);
-        
+        int index = buffer_add(value);
+        verbose("Producer %d: putting %d into buffer at index=%d", producer_id, value, index);
+
         // Sleep
         usleep(SLEEP_UTIME);
         
@@ -112,9 +112,9 @@ void start_consumer2(int consumer_id)
         verbose("Consumer %d: waiting for product in buffer", consumer_id);
         semaphore_wait(sem_n);
         
-        // Retrieve an item
-        if (-1 != buffer_retrieve(&value)) {
-            verbose("Consumer %d: retrieved %d from buffer", consumer_id, value);
+        int index = buffer_retrieve(&value);
+        if (index >= 0) {
+            verbose("Consumer %d: retrieving %d from buffer at index=%d", consumer_id, value, index);
         } else {
             // Stop consumer
             running = 0;
