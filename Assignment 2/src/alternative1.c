@@ -86,7 +86,7 @@ void start_producer1(int producer_id)
         
         // Add value into buffer
         int value = generate_producer_value(producer_id);
-        printf("\nProducer %d: putting %d into buffer\n\n", producer_id, value);
+        printf("Producer %d: putting %d into buffer\n", producer_id, value);
         buffer_add(value);
         
         // Sleep
@@ -101,7 +101,7 @@ void start_producer1(int producer_id)
     semaphore_wait(sem_e);
     semaphore_wait(sem_s);
     int value = -1;
-    printf("\nProducer %d: putting %d into buffer\n\n", producer_id, value);
+    printf("Producer %d: putting %d into buffer\n", producer_id, value);
     buffer_add(value);
     semaphore_signal(sem_n); // add 1 to count of elements in buffer
     semaphore_signal(sem_s); // release lock on buffer
@@ -133,7 +133,7 @@ void start_consumer1(int consumer_id)
 
         // Retrieve an item
         value = buffer_retrieve();
-        printf("\nConsumer %d: retrieving %d from buffer\n\n", consumer_id, value);
+        printf("Consumer %d: retrieving %d from buffer\n", consumer_id, value);
 
         // Sleep
         //sleep(SLEEP_TIME);

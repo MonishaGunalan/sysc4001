@@ -6,36 +6,29 @@
 //
 
 #include <time.h>
+#include <sys/time.h>
 #include "timer.h"
 
 static double timer_total_time = 0;
-static time_t timer_start_time = 0;
+static double timer_start_time = 0;
 
 // Start timer
 void timer_start()
 {
-    timer_start_time = time(NULL);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    timer_start_time = tv.tv_usec + (tv.tv_sec * 1000000);
     timer_total_time = 0;
-}
-
-// Pause timer
-void timer_pause()
-{
-    timer_total_time += difftime(time(NULL), timer_start_time);
-}
-
-// Continue timer
-void timer_continue()
-{
-    timer_start_time = time(NULL);
 }
 
 // Stop timer
 double timer_stop()
 {
-    timer_pause();
-    double total_time = timer_total_time;
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    double total_time = tv.tv_usec + (tv.tv_sec * 1000000);
+    total_time -= timer_start_time;
     timer_total_time = 0;
     timer_start_time = 0;
-    return total_time;
+    return total_time / 1000000;
 }

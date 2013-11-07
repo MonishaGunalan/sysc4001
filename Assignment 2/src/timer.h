@@ -9,8 +9,6 @@
 #define SYSC_4001_Assignment_2_timer_h
 
 void timer_start(void);
-void timer_pause(void);
-void timer_continue(void);
 double timer_stop(void);
 
 #endif
