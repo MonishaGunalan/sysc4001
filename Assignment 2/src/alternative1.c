@@ -11,8 +11,9 @@
 #include "buffer.h"
 #include "semaphore.h"
 #include "timer.h"
-#include "iteration1.h"
+#include "alternative1.h"
 #include <errno.h>
+#include <unistd.h>
 
 static sem_t* sem_s;
 static sem_t* sem_n;
@@ -21,7 +22,11 @@ static sem_t* sem_e;
 // Run the first alternative in the assignment
 void run_alternative1(int buffer_size, int number_of_producers, int number_of_consumers)
 {
-    timer_start();
+    // Consumers cannot be more than producers (limitation to be able to terminate)
+    if (number_of_consumers > number_of_producers) {
+        number_of_consumers = number_of_producers;
+        printf("Warning: consumers capped at number of producers: %d\n", number_of_producers);
+    }
     
     printf("Running iteration1: producers=%d, consumers=%d, buffer=%d\n", number_of_producers, number_of_consumers, buffer_size);
     // Initialize semaphores
@@ -36,6 +41,9 @@ void run_alternative1(int buffer_size, int number_of_producers, int number_of_co
     // Initialize shared buffer
     buffer_init(buffer_size);
     
+    // Start timer to measure performance
+    timer_start();
+    
     // Start producers
     start_children(1, number_of_producers, start_producer1);
 
@@ -49,8 +57,9 @@ void run_alternative1(int buffer_size, int number_of_producers, int number_of_co
         wait(&status);
     }
     
+    // Stop timer and display result
     double t = timer_stop();
-    printf("Iteration 1 completed in %f         \n\n", t);
+    printf("\nIteration 1 completed in %f \n\n", t);
     
     // Delete semaphores and shared memory
     semaphore_delete(SEMAPHORE_S);
@@ -77,13 +86,26 @@ void start_producer1(int producer_id)
         
         // Add value into buffer
         int value = generate_producer_value(producer_id);
-        printf("Producer %d: putting %d into buffer\n", producer_id, value);
+        printf("\nProducer %d: putting %d into buffer\n\n", producer_id, value);
         buffer_add(value);
+        
+        // Sleep
+        usleep(SLEEP_UTIME);
         
         // Signal sempahores
         semaphore_signal(sem_n); // add 1 to count of elements in buffer
         semaphore_signal(sem_s); // release lock on buffer
     }
+
+    // Signal to consumer to finish
+    semaphore_wait(sem_e);
+    semaphore_wait(sem_s);
+    int value = -1;
+    printf("\nProducer %d: putting %d into buffer\n\n", producer_id, value);
+    buffer_add(value);
+    semaphore_signal(sem_n); // add 1 to count of elements in buffer
+    semaphore_signal(sem_s); // release lock on buffer
+
     
     // Close semaphores and buffer for this process
     semaphore_close(sem_s);
@@ -111,7 +133,10 @@ void start_consumer1(int consumer_id)
 
         // Retrieve an item
         value = buffer_retrieve();
-        printf("Consumer %d: retrieved %d from buffer\n", consumer_id, value);
+        printf("\nConsumer %d: retrieving %d from buffer\n\n", consumer_id, value);
+
+        // Sleep
+        //sleep(SLEEP_TIME);
         
         // Signal sempahores
         semaphore_signal(sem_e); // add 1 to count of spaces in buffer

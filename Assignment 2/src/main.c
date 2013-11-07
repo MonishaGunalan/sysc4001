@@ -7,11 +7,11 @@
 
 #include <stdlib.h>
 #include "common.h"
-#include "iteration1.h"
+#include "alternative1.h"
 
 int main(int argc, const char * argv[])
 {
-    run_alternative1(2, 2, 2);
+    run_alternative1(2, 2, 3);
     return 0;
 }
 
