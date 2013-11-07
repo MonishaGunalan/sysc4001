@@ -6,23 +6,15 @@
 //
 
 #include <stdio.h>
-#include "main.h"
+#include <sys/wait.h>
+#include "common.h"
 #include "buffer.h"
 #include "semaphore.h"
 #include "iteration1.h"
 
-void start_producer1(int producer_id)
-{
-    printf("Starting producer: iteration=%d, id=%d\n", 1, producer_id);
-}
-
-void start_consumer1(int consumer_id)
-{
-    printf("Starting consumer: iteration=%d, id=%d\n", 1, consumer_id);
-}
-
 void run_alternative1(int buffer_size, int number_of_producers, int number_of_consumers)
 {
+    printf("Running iteration1: producers=%d, consumers=%d, buffer=%d\n", number_of_producers, number_of_consumers, buffer_size);
     // Initialize semaphores
     // Notes:
     //  - S is for mutual exclusion of the buffer
@@ -36,20 +28,37 @@ void run_alternative1(int buffer_size, int number_of_producers, int number_of_co
     buffer_init(buffer_size);
     
     // Start producers
-    for (int i = 1; i <= number_of_producers; i++) {
-        if ( fork_producer(1, i) <= 0 ) {
-            // Return when it is just the child returning or error
-            return;
-        }
+    start_children(1, number_of_producers, start_producer1);
+
+    // Start consumers
+    start_children(1, number_of_consumers, start_consumer1);
+    
+    // Wait for all children to terminate
+    int status;
+    int children_count = number_of_consumers + number_of_producers;
+    for (int i = children_count; i > 0; i--) {
+        wait(&status);
     }
     
-    // Start consumers
-    for (int i = 1; i <= number_of_consumers; i++) {
-        if ( fork_consumer(1, i) <= 0 ) {
-            // Return when it is just the child returning or error
-            return;
-        }
-    }
+    printf("Iteration 1 completed\n\n");
     
     return;
 }
+
+void start_producer1(int producer_id)
+{
+    printf("Starting producer: iteration=%d, id=%d\n", 1, producer_id);
+    
+    int value = generate_producer_value(producer_id);
+    printf("Producer #%d: putting %d into buffer\n", producer_id, value);
+    buffer_add(value);
+}
+
+void start_consumer1(int consumer_id)
+{
+    printf("Starting consumer: iteration=%d, id=%d\n", 1, consumer_id);
+    
+    int value = buffer_retrieve();
+    printf("Consumer #%d: retrieved %d from buffer\n", consumer_id, value);
+}
+

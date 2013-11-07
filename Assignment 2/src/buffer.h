@@ -8,13 +8,17 @@
 #ifndef SYSC_4001_Assignment_2_buffer_h
 #define SYSC_4001_Assignment_2_buffer_h
 
-int buffer_in_index = 0;
-int buffer_out_index = 0;
-int buffer_size = 0;
+#define BUFFER_SHM_KEY "/assign2_buffer"
+#define BUFFER_MAX_VALUES 500
+
+typedef struct buffer_st {
+    int in_index;
+    int out_index;
+    int values[BUFFER_MAX_VALUES];
+} buffer_st;
 
 void buffer_init(int size);
-int  buffer_get_size(void);
-int  buffer_get_value(int index);
-void buffer_set_value(int index, int value);
+int  buffer_retrieve();
+void buffer_add(int value);
 
 #endif
