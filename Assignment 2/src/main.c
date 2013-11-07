@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 #include "common.h"
-#include "iteration1.h"
+#include "alternative1.h"
 
 int main(int argc, const char * argv[])
 {

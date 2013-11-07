@@ -11,9 +11,9 @@
 		0C3B6AD4182BEE3600BE365A /* semaphore.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C8314B9182AC3F700F46D9E /* semaphore.c */; };
 		0C3B6AD5182BEE3600BE365A /* buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CEBDA3C182A9DC9007B0CED /* buffer.c */; };
 		0C3B6AD6182BEE3600BE365A /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C430B5A182BB1B500FBEEF3 /* timer.c */; };
-		0C3B6AD7182BEE3600BE365A /* iteration1.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CEBDA3F182A9DDE007B0CED /* iteration1.c */; };
+		0C3B6AD7182BEE3600BE365A /* alternative1.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CEBDA3F182A9DDE007B0CED /* alternative1.c */; };
 		0C3B6AD8182BEF0000BE365A /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C10D26D182A7E92006951DB /* main.c */; };
-		C8A8AD75182C14FE003E4B52 /* alternative2.c in Sources */ = {isa = PBXBuildFile; fileRef = C8A8AD71182C0500003E4B52 /* alternative2.c */; };
+		C87D90A4182C17DB00F4D8C2 /* alternative2.c in Sources */ = {isa = PBXBuildFile; fileRef = C87D90A3182C17DB00F4D8C2 /* alternative2.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,10 +39,10 @@
 		0C8314B9182AC3F700F46D9E /* semaphore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = semaphore.c; sourceTree = "<group>"; };
 		0CEBDA3C182A9DC9007B0CED /* buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buffer.c; sourceTree = "<group>"; };
 		0CEBDA3E182A9DD4007B0CED /* buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
-		0CEBDA3F182A9DDE007B0CED /* iteration1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iteration1.c; sourceTree = "<group>"; };
-		0CEBDA41182A9DE8007B0CED /* iteration1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iteration1.h; sourceTree = "<group>"; };
-		C8A8AD71182C0500003E4B52 /* alternative2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alternative2.c; sourceTree = "<group>"; };
-		C8A8AD73182C0531003E4B52 /* alternative2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = alternative2.h; sourceTree = "<group>"; };
+		0CEBDA3F182A9DDE007B0CED /* alternative1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alternative1.c; sourceTree = "<group>"; };
+		0CEBDA41182A9DE8007B0CED /* alternative1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = alternative1.h; sourceTree = "<group>"; };
+		C87D90A2182C17DB00F4D8C2 /* alternative2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alternative2.h; sourceTree = "<group>"; };
+		C87D90A3182C17DB00F4D8C2 /* alternative2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alternative2.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +75,8 @@
 		0C113F7C1827F4FC00181C42 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				C87D90A2182C17DB00F4D8C2 /* alternative2.h */,
+				C87D90A3182C17DB00F4D8C2 /* alternative2.c */,
 				0C10D26D182A7E92006951DB /* main.c */,
 				0C32C284182B2BA30088BF29 /* common.c */,
 				0C32C286182B2BBE0088BF29 /* common.h */,
@@ -84,10 +86,8 @@
 				0CEBDA3E182A9DD4007B0CED /* buffer.h */,
 				0C430B5A182BB1B500FBEEF3 /* timer.c */,
 				0C430B5C182BB5D400FBEEF3 /* timer.h */,
-				0CEBDA3F182A9DDE007B0CED /* iteration1.c */,
-				C8A8AD71182C0500003E4B52 /* alternative2.c */,
-				C8A8AD73182C0531003E4B52 /* alternative2.h */,
-				0CEBDA41182A9DE8007B0CED /* iteration1.h */,
+				0CEBDA3F182A9DDE007B0CED /* alternative1.c */,
+				0CEBDA41182A9DE8007B0CED /* alternative1.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -143,11 +143,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C3B6AD7182BEE3600BE365A /* iteration1.c in Sources */,
+				0C3B6AD7182BEE3600BE365A /* alternative1.c in Sources */,
 				0C3B6AD4182BEE3600BE365A /* semaphore.c in Sources */,
 				0C3B6AD8182BEF0000BE365A /* main.c in Sources */,
 				0C3B6AD3182BEE2F00BE365A /* common.c in Sources */,
-				C8A8AD75182C14FE003E4B52 /* alternative2.c in Sources */,
+				C87D90A4182C17DB00F4D8C2 /* alternative2.c in Sources */,
 				0C3B6AD6182BEE3600BE365A /* timer.c in Sources */,
 				0C3B6AD5182BEE3600BE365A /* buffer.c in Sources */,
 			);

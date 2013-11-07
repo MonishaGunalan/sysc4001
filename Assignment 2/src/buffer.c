@@ -53,7 +53,6 @@ int  buffer_retrieve()
     buffer->out_index = (buffer->out_index + 1) % buffer_size;
     msync(buffer, buffer_memory_size, MS_SYNC | MS_INVALIDATE);
     return value;
-    return 5;
 }
 
 // Adds a value the the buffer and increments the in index
@@ -61,6 +60,11 @@ void buffer_add(int value)
 {
     buffer->values[buffer->in_index] = value;
     buffer->in_index = (buffer->in_index + 1) % buffer_size;
+    
+    if (buffer->values[buffer->out_index] == -1) {
+        buffer->values[buffer->out_index] = 0;
+    }
+    
     msync(buffer, buffer_memory_size, MS_SYNC | MS_INVALIDATE);
 }
 

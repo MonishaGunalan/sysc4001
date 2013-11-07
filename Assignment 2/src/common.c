@@ -10,12 +10,12 @@
 #include <unistd.h>
 #include "common.h"
 
-pid_t fork_child(int iteration, int id, void (*callback)(int))
+pid_t fork_child(int alternative, int id, void (*callback)(int))
 {
     int child_pid = fork();
     switch(child_pid) {
         case -1: // Error
-            printf("Failed to fork child, iteration=%d, id=%d\n", iteration, id);
+            printf("Failed to fork child, alternative=%d, id=%d\n", alternative, id);
             exit(-1);  // stop from returning to "parent" code
         case 0: // Child
             srand(RAND_SEED + id);
@@ -29,10 +29,10 @@ pid_t fork_child(int iteration, int id, void (*callback)(int))
     return child_pid;
 }
 
-void start_children(int iteration, int child_count, void (*callback)(int))
+void start_children(int alternative, int child_count, void (*callback)(int))
 {
     for (int i = 1; i <= child_count; i++) {
-        fork_child(iteration, i, callback);
+        fork_child(alternative, i, callback);
     }
 }
 
