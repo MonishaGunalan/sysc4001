@@ -50,6 +50,8 @@ void buffer_init(int buff_size)
 int  buffer_retrieve()
 {
     int value = buffer->values[buffer->out_index];
+    buffer->out_index = (buffer->out_index + 1) % buffer_size;
+    msync(buffer, buffer_memory_size, MS_SYNC | MS_INVALIDATE);
     return value;
 }
 
