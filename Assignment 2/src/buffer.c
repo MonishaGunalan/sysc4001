@@ -20,7 +20,7 @@ static int buffer_fd; // Buffer file descriptor
 static buffer_st* buffer;
 
 // Initializes the buffer in shared memory
-void buffer_init(int buff_size)
+void buffer_init(int buff_size, int producers_count)
 {
     // Save buffer size in global var
     buffer_size = (buff_size > BUFFER_MAX_VALUES) ? BUFFER_MAX_VALUES : buff_size;
@@ -44,28 +44,41 @@ void buffer_init(int buff_size)
     // Initialize the indices
     buffer->in_index = 0;
     buffer->out_index = 0;
+    
+    // Initialize the producers count
+    buffer->producers = producers_count;
 }
 
 // Retrieves the next value from the buffer and increments the out index
-int  buffer_retrieve()
+// Returns the index of where the value was retrieved
+// Returns -1 if there are no more producers
+int buffer_retrieve(int* value)
 {
-    int value = buffer->values[buffer->out_index];
+    if (buffer->producers <= 0) {
+        return -1;
+    }
+    
+    int index = buffer->out_index;
+    *value = buffer->values[buffer->out_index];
     buffer->out_index = (buffer->out_index + 1) % buffer_size;
-    msync(buffer, buffer_memory_size, MS_SYNC | MS_INVALIDATE);
-    return value;
+    msync(buffer, buffer_memory_size, MS_SYNC | MS_INVALIDATE); // ensure values are synced across processes
+    return index;
 }
 
 // Adds a value the the buffer and increments the in index
-void buffer_add(int value)
+// Returns the buffer index where the value is stored
+int buffer_add(int value)
 {
+    int index = buffer->in_index;
     buffer->values[buffer->in_index] = value;
     buffer->in_index = (buffer->in_index + 1) % buffer_size;
-    
-    if (buffer->values[buffer->out_index] == -1) {
-        buffer->values[buffer->out_index] = 0;
-    }
-    
-    msync(buffer, buffer_memory_size, MS_SYNC | MS_INVALIDATE);
+    msync(buffer, buffer_memory_size, MS_SYNC | MS_INVALIDATE); // ensure values are synced across processes
+    return index;
+}
+
+void buffer_decrement_producers()
+{
+    buffer->producers -= 1;
 }
 
 // Closes the buffer

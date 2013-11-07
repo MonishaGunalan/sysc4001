@@ -21,13 +21,10 @@
 static sem_t* sem_n;
 static sem_t* sem_e;
 
-
-
 // Run the first alternative in the assignment
 void run_alternative2(int buffer_size)
 {
-    
-    printf("Running alternative2: producers=%d, consumers=%d, buffer=%d\n", NUMBER_OF_PRODUCERS, NUMBER_OF_CONSUMERS, buffer_size);
+    printf("Running alternative 2: producers=%d, consumers=%d, buffer=%d\n", NUMBER_OF_PRODUCERS, NUMBER_OF_CONSUMERS, buffer_size);
     // Initialize semaphores
     // Notes:
     //  - N is to synchronize the current number of items in the buffer
@@ -37,7 +34,7 @@ void run_alternative2(int buffer_size)
     sem_e = semaphore_create(SEMAPHORE_E, buffer_size);
     
     // Initialize shared buffer
-    buffer_init(buffer_size);
+    buffer_init(buffer_size, NUMBER_OF_PRODUCERS);
     
     // Start timer to measure performance
     timer_start();
@@ -56,12 +53,12 @@ void run_alternative2(int buffer_size)
     }
     
     double t = timer_stop();
-    printf("Alternative2 completed in %f         \n\n", t);
+    printf("Alternative 2 completed in %f\n", t);
     
     // Delete semaphores and shared memory
     semaphore_delete(SEMAPHORE_N);
     semaphore_delete(SEMAPHORE_E);
-    buffer_close();
+    buffer_delete();
     
     return;
 }
@@ -69,16 +66,16 @@ void run_alternative2(int buffer_size)
 // Run the producer code
 void start_producer2(int producer_id)
 {
-    printf("Producer %d: starting\n", producer_id);
+    verbose("Producer %d: starting", producer_id);
     
     for(int i = 0; i < ENTRIES_PER_PRODUCER; i++) {
         // Wait until there is room in the buffer
-        printf("Producer %d: waiting for room in buffer\n", producer_id);
+        verbose("Producer %d: waiting for room in buffer", producer_id);
         semaphore_wait(sem_e);
         
         // Add value into buffer
         int value = generate_producer_value(producer_id);
-        printf("Producer %d: putting %d into buffer\n", producer_id, value);
+        verbose("Producer %d: putting %d into buffer", producer_id, value);
         buffer_add(value);
         
         // Sleep
@@ -92,7 +89,7 @@ void start_producer2(int producer_id)
     semaphore_wait(sem_e);
 
     int value = -1;
-    printf("\nProducer %d: putting %d into buffer\n\n", producer_id, value);
+    verbose("Producer %d: putting %d into buffer", producer_id, value);
     buffer_add(value);
     semaphore_signal(sem_n); // add 1 to count of elements in buffer
   
@@ -103,29 +100,34 @@ void start_producer2(int producer_id)
     buffer_close();
 }
 
-
-
 // Run the consumer code
 void start_consumer2(int consumer_id)
 {
-    printf("Starting consumer: alternative=%d, id=%d\n", 1, consumer_id);
+    verbose("Starting consumer: alternative=%d, id=%d", 1, consumer_id);
     int value;
+    int running = 1;
     
     do {
         // Wait until there is something in the buffer to consume
-        printf("Consumer %d: waiting for product in buffer\n", consumer_id);
+        verbose("Consumer %d: waiting for product in buffer", consumer_id);
         semaphore_wait(sem_n);
         
         // Retrieve an item
-        value = buffer_retrieve();
-        printf("Consumer %d: retrieved %d from buffer\n", consumer_id, value);
+        if (-1 != buffer_retrieve(&value)) {
+            verbose("Consumer %d: retrieved %d from buffer", consumer_id, value);
+        } else {
+            // Stop consumer
+            running = 0;
+            
+            // Signal other consumers to stop by simulating an entry to read
+            semaphore_signal(sem_n);
+        }
         
         // Signal sempahores
         semaphore_signal(sem_e); // add 1 to count of spaces in buffer
-    } while (value != -1);
+    } while (running);
     
     // Close semaphores and buffer for this process
-
     semaphore_close(sem_n);
     semaphore_close(sem_e);
     buffer_close();

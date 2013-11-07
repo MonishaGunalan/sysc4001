@@ -6,14 +6,55 @@
 //
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "common.h"
+#include "buffer.h"
 #include "alternative1.h"
+#include "alternative2.h"
 
 int main(int argc, const char * argv[])
 {
-    run_alternative1(2, 2, 2);
+    int part;
+    int alternative;
+    int producers_count = 5; //15;
+    int consumers_count = 15;
+    int buffer_size = 0;
+
+    printf("Select assignment part (1, 2): ");
+    scanf("%d", &part);
     
-    run_alternative2(2);
+    if (part == 1) {
+        buffer_size = BUFFER_SMALL;
+        enable_verbose();
+    } else {
+        disable_verbose();
+    }
+
+    printf("Select alternative (1, 2, 3): ");
+    scanf("%d", &alternative);
+    
+    switch (alternative) {
+        case 1:
+            if (part == 1) {
+                run_alternative1(BUFFER_SMALL, producers_count, consumers_count);
+            } else {
+                run_alternative1(BUFFER_SMALL, producers_count, consumers_count);
+                run_alternative1(BUFFER_MEDIUM, producers_count, consumers_count);
+                run_alternative1(BUFFER_LARGE, producers_count, consumers_count);
+            }
+            break;
+        case 2:
+            if (part == 1) {
+                run_alternative2(BUFFER_SMALL);
+            } else {
+                run_alternative2(BUFFER_SMALL);
+                run_alternative2(BUFFER_MEDIUM);
+                run_alternative2(BUFFER_LARGE);
+            }
+            break;
+        case 3:
+            break;
+    }
     return 0;
 }
 

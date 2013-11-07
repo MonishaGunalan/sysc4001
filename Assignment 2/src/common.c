@@ -8,7 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdarg.h>
+#include <stdbool.h>
 #include "common.h"
+
+static bool verbose_flag = false;
 
 pid_t fork_child(int alternative, int id, void (*callback)(int))
 {
@@ -40,3 +44,25 @@ int generate_producer_value(int producer_id)
 {
     return producer_id * 1000 + (rand() % 100);
 }
+
+void enable_verbose()
+{
+    verbose_flag = true;
+}
+
+void disable_verbose()
+{
+    verbose_flag = false;
+}
+
+void verbose(const char * format, ...)
+{
+	if (verbose_flag) {
+        va_list args;
+        va_start(args, format);
+        vprintf(format, args);
+        printf("\n");
+        va_end(args);
+    }
+}
+
