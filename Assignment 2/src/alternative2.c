@@ -11,7 +11,7 @@
 #include "buffer.h"
 #include "semaphore.h"
 #include "timer.h"
-#include "Alternative2.h"
+#include "alternative2.h"
 #include <errno.h>
 
 #define NUMBER_OF_PRODUCERS 1
