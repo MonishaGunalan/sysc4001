@@ -18,8 +18,4 @@ void run_alternative1(int buffer_size, int number_of_producers, int number_of_co
 void start_producer1(int producer_id);
 void start_consumer1(int consumer_id);
 
-sem_t* sem_s;
-sem_t* sem_n;
-sem_t* sem_e;
-
 #endif

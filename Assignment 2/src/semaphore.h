@@ -15,6 +15,6 @@ sem_t * semaphore_create(char* name, int inital_value);
 void semaphore_signal(sem_t* sem);
 void semaphore_wait(sem_t* sem);
 void semaphore_close(sem_t* sem);
-void semaphore_delete(sem_t* sem);
+void semaphore_delete(char* name);
 
 #endif

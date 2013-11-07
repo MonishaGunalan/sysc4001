@@ -11,7 +11,7 @@
 
 int main(int argc, const char * argv[])
 {
-    run_alternative1(50, 3, 5);
+    run_alternative1(2, 2, 2);
     return 0;
 }
 
