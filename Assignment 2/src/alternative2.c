@@ -13,6 +13,7 @@
 #include "timer.h"
 #include "alternative2.h"
 #include <errno.h>
+#include <unistd.h>
 
 #define NUMBER_OF_PRODUCERS 1
 #define NUMBER_OF_CONSUMERS 1
@@ -25,9 +26,8 @@ static sem_t* sem_e;
 // Run the first alternative in the assignment
 void run_alternative2(int buffer_size)
 {
-    timer_start();
     
-    printf("Running iteration1: producers=%d, consumers=%d, buffer=%d\n", NUMBER_OF_PRODUCERS, NUMBER_OF_CONSUMERS, buffer_size);
+    printf("Running alternative2: producers=%d, consumers=%d, buffer=%d\n", NUMBER_OF_PRODUCERS, NUMBER_OF_CONSUMERS, buffer_size);
     // Initialize semaphores
     // Notes:
     //  - N is to synchronize the current number of items in the buffer
@@ -38,6 +38,9 @@ void run_alternative2(int buffer_size)
     
     // Initialize shared buffer
     buffer_init(buffer_size);
+    
+    // Start timer to measure performance
+    timer_start();
     
     // Start producers
     start_children(2, NUMBER_OF_PRODUCERS, start_producer2);
@@ -78,9 +81,21 @@ void start_producer2(int producer_id)
         printf("Producer %d: putting %d into buffer\n", producer_id, value);
         buffer_add(value);
         
+        // Sleep
+        usleep(SLEEP_UTIME);
+        
         // Signal sempahores
         semaphore_signal(sem_n); // add 1 to count of elements in buffer
     }
+    
+    // Signal to consumer to finish
+    semaphore_wait(sem_e);
+
+    int value = -1;
+    printf("\nProducer %d: putting %d into buffer\n\n", producer_id, value);
+    buffer_add(value);
+    semaphore_signal(sem_n); // add 1 to count of elements in buffer
+  
     
     // Close semaphores and buffer for this process
     semaphore_close(sem_n);
@@ -93,7 +108,7 @@ void start_producer2(int producer_id)
 // Run the consumer code
 void start_consumer2(int consumer_id)
 {
-    printf("Starting consumer: iteration=%d, id=%d\n", 1, consumer_id);
+    printf("Starting consumer: alternative=%d, id=%d\n", 1, consumer_id);
     int value;
     
     do {
