@@ -21,5 +21,6 @@ void buffer_init(int size);
 int  buffer_retrieve();
 void buffer_add(int value);
 void buffer_close(void);
+void buffer_delete(void);
 
 #endif

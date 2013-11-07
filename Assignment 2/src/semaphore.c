@@ -16,7 +16,7 @@
 sem_t * semaphore_create(char* name, int initial_value)
 {
     semaphore_delete(name);
-    sem_t* sem = sem_open(name, O_CREAT, 0666, initial_value);
+    sem_t* sem = sem_open(name, O_CREAT, 0777, initial_value);
     if (SEM_FAILED == sem) {
         printf("Failed to create semaphore with errno=%d\n", errno);
         exit(0);

@@ -33,14 +33,6 @@ void run_alternative1(int buffer_size, int number_of_producers, int number_of_co
     sem_n = semaphore_create(SEMAPHORE_N, 0);
     sem_e = semaphore_create(SEMAPHORE_E, buffer_size);
     
-    int y;
-    int x = sem_getvalue(sem_n, &y);
-    printf("Sem e count: %d\n", y);
-    printf("Sem e count: %d\n", x);
-    printf("Sem e count: %d\n", errno);
-    exit(0);
-
-    
     // Initialize shared buffer
     buffer_init(buffer_size);
     
@@ -83,11 +75,24 @@ void start_producer1(int producer_id)
         printf("Producer %d: waiting for buffer lock\n", producer_id);
         semaphore_wait(sem_s);
         
+        // Add value into buffer
         int value = generate_producer_value(producer_id);
-        printf("Producer #%d: putting %d into buffer\n", producer_id, value);
+        printf("Producer %d: putting %d into buffer\n", producer_id, value);
         buffer_add(value);
+        
+        // Signal sempahores
+        semaphore_signal(sem_n); // add 1 to count of elements in buffer
+        semaphore_signal(sem_s); // release lock on buffer
     }
+    
+    // Close semaphores and buffer for this process
+    semaphore_close(sem_s);
+    semaphore_close(sem_n);
+    semaphore_close(sem_e);
+    buffer_close();
 }
+
+
 
 // Run the consumer code
 void start_consumer1(int consumer_id)
@@ -106,7 +111,17 @@ void start_consumer1(int consumer_id)
 
         // Retrieve an item
         value = buffer_retrieve();
-        printf("Consumer #%d: retrieved %d from buffer\n", consumer_id, value);
+        printf("Consumer %d: retrieved %d from buffer\n", consumer_id, value);
+        
+        // Signal sempahores
+        semaphore_signal(sem_e); // add 1 to count of spaces in buffer
+        semaphore_signal(sem_s); // release lock on buffer
     } while (value != -1);
+    
+    // Close semaphores and buffer for this process
+    semaphore_close(sem_s);
+    semaphore_close(sem_n);
+    semaphore_close(sem_e);
+    buffer_close();
 }
 

@@ -64,9 +64,14 @@ void buffer_add(int value)
     msync(buffer, buffer_memory_size, MS_SYNC | MS_INVALIDATE);
 }
 
-// Closes and deletes the buffer
+// Closes the buffer
 void buffer_close()
 {
     close(buffer_fd);
+}
+
+// Deletes the buffer
+void buffer_delete()
+{
     shm_unlink(BUFFER_SHM_KEY);
 }
