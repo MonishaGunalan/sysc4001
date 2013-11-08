@@ -13,6 +13,7 @@
 		0C3B6AD6182BEE3600BE365A /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C430B5A182BB1B500FBEEF3 /* timer.c */; };
 		0C3B6AD7182BEE3600BE365A /* alternative1.c in Sources */ = {isa = PBXBuildFile; fileRef = 0CEBDA3F182A9DDE007B0CED /* alternative1.c */; };
 		0C3B6AD8182BEF0000BE365A /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 0C10D26D182A7E92006951DB /* main.c */; };
+		C8503464182C60EB00C87AF0 /* alternative3.c in Sources */ = {isa = PBXBuildFile; fileRef = C8503463182C60EB00C87AF0 /* alternative3.c */; };
 		C8B1F080182C45A30010570E /* alternative2.c in Sources */ = {isa = PBXBuildFile; fileRef = C8B1F07F182C45A30010570E /* alternative2.c */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,8 @@
 		0CEBDA3E182A9DD4007B0CED /* buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = buffer.h; sourceTree = "<group>"; };
 		0CEBDA3F182A9DDE007B0CED /* alternative1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alternative1.c; sourceTree = "<group>"; };
 		0CEBDA41182A9DE8007B0CED /* alternative1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = alternative1.h; sourceTree = "<group>"; };
+		C8503463182C60EB00C87AF0 /* alternative3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alternative3.c; sourceTree = "<group>"; };
+		C8503465182C615A00C87AF0 /* alternative3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alternative3.h; sourceTree = "<group>"; };
 		C8B1F07E182C45A30010570E /* alternative2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alternative2.h; sourceTree = "<group>"; };
 		C8B1F07F182C45A30010570E /* alternative2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alternative2.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,6 +91,8 @@
 				0CEBDA41182A9DE8007B0CED /* alternative1.h */,
 				C8B1F07F182C45A30010570E /* alternative2.c */,
 				C8B1F07E182C45A30010570E /* alternative2.h */,
+				C8503463182C60EB00C87AF0 /* alternative3.c */,
+				C8503465182C615A00C87AF0 /* alternative3.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -144,6 +149,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C3B6AD7182BEE3600BE365A /* alternative1.c in Sources */,
+				C8503464182C60EB00C87AF0 /* alternative3.c in Sources */,
 				0C3B6AD4182BEE3600BE365A /* semaphore.c in Sources */,
 				0C3B6AD8182BEF0000BE365A /* main.c in Sources */,
 				0C3B6AD3182BEE2F00BE365A /* common.c in Sources */,

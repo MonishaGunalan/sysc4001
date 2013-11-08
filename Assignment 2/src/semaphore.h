@@ -1,9 +1,8 @@
 //
-//  semaphore.h
-//  SYSC 4001 Assignment 2
-//
-//  Created by Korey Conway on 11/6/2013.
-//  Copyright (c) 2013 SG•Nexus. All rights reserved.
+// SYSC 4001 - Assignment 2
+// Monisha Gunalan (100871444)
+// Korey Conway (100838924)
+// November 2013
 //
 
 #ifndef SYSC_4001_Assignment_2_semaphore_h

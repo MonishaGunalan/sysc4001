@@ -29,7 +29,6 @@ void run_alternative2(int buffer_size)
     // Notes:
     //  - N is to synchronize the current number of items in the buffer
     //  - E is to synchronzie the number of empty items
-   
     sem_n = semaphore_create(SEMAPHORE_N, 0);
     sem_e = semaphore_create(SEMAPHORE_E, buffer_size);
     
@@ -52,6 +51,7 @@ void run_alternative2(int buffer_size)
         wait(&status);
     }
     
+    // Stop timer and display result
     double t = timer_stop();
     printf("Alternative 2 completed in %f\n", t);
     

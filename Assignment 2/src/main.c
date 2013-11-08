@@ -11,6 +11,7 @@
 #include "buffer.h"
 #include "alternative1.h"
 #include "alternative2.h"
+#include "alternative3.h"
 
 int main(int argc, const char * argv[])
 {
@@ -53,6 +54,13 @@ int main(int argc, const char * argv[])
             }
             break;
         case 3:
+            if (part == 1) {
+                run_alternative3(BUFFER_SMALL, producers_count, consumers_count);
+            } else {
+                run_alternative3(BUFFER_SMALL, producers_count, consumers_count);
+                run_alternative3(BUFFER_MEDIUM, producers_count, consumers_count);
+                run_alternative3(BUFFER_LARGE, producers_count, consumers_count);
+            }
             break;
     }
     return 0;

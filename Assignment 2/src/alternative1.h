@@ -5,8 +5,8 @@
 // November 2013
 //
 
-#ifndef SYSC_4001_Assignment_2_iteration1_h
-#define SYSC_4001_Assignment_2_iteration1_h
+#ifndef SYSC_4001_Assignment_2_alternative1_h
+#define SYSC_4001_Assignment_2_alternative1_h
 
 #include <semaphore.h> // needed for sem_t type
 
