@@ -86,8 +86,8 @@ void start_producer3(int producer_id)
         int index = buffer_add(value);
         verbose("Producer %d: putting %d into buffer at index=%d", producer_id, value, index);
         
-        // Sleep
-        usleep(SLEEP_UTIME);
+        // Pause
+        time_pause();
         
         // Signal sempahores
         semaphore_signal(sem_n); // add 1 to count of elements in buffer
@@ -141,8 +141,8 @@ void start_consumer3(int consumer_id)
             semaphore_signal(sem_n);
         }
 
-        // Sleep
-        usleep(SLEEP_UTIME);
+        // Pause
+        time_pause();
         
         // Signal sempahores
         semaphore_signal(sem_e); // add 1 to count of spaces in buffer

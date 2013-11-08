@@ -81,6 +81,9 @@ void start_producer2(int producer_id)
         // Sleep
         usleep(SLEEP_UTIME);
         
+        // Pause
+        time_pause();
+
         // Signal sempahores
         semaphore_signal(sem_n); // add 1 to count of elements in buffer
     }
@@ -123,6 +126,9 @@ void start_consumer2(int consumer_id)
             semaphore_signal(sem_n);
         }
         
+        // Pause
+        time_pause();
+
         // Signal sempahores
         semaphore_signal(sem_e); // add 1 to count of spaces in buffer
     } while (running);

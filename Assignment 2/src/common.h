@@ -8,9 +8,6 @@
 #ifndef SYSC_4001_Assignment_2_common_h
 #define SYSC_4001_Assignment_2_common_h
 
-#include <sys/types.h> // needed for pid_t type
-#include <time.h>
-
 #define RAND_SEED (unsigned) time(NULL)
 #define ENTRIES_PER_PRODUCER 500
 #define SLEEP_UTIME 100 // micro-seconds to sleep in critical sections
@@ -21,5 +18,8 @@ int generate_producer_value(int producer_id);
 void enable_verbose(void);
 void disable_verbose(void);
 void verbose(const char * format, ...);
+void enable_pause(void);
+void disable_pause(void);
+void time_pause(void);
 
 #endif

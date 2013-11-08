@@ -53,7 +53,8 @@ void run_alternative1(int buffer_size, int number_of_producers, int number_of_co
     
     // Stop timer and display result
     double t = timer_stop();
-    printf("Iteration 1 completed in %f\n", t);
+    printf("\n----------------");
+    printf("Iteration 1 with buffer_size=%d completed in %f \n\n", buffer_size, t);
     
     // Delete semaphores and shared memory
     semaphore_delete(SEMAPHORE_S);
@@ -83,8 +84,8 @@ void start_producer1(int producer_id)
         int index = buffer_add(value);
         verbose("Producer %d: putting %d into buffer at index=%d", producer_id, value, index);
         
-        // Sleep
-        usleep(SLEEP_UTIME);
+        // Pause
+        time_pause();
         
         // Signal sempahores
         semaphore_signal(sem_n); // add 1 to count of elements in buffer
@@ -141,8 +142,8 @@ void start_consumer1(int consumer_id)
             semaphore_signal(sem_n);
         }
 
-        // Sleep
-        usleep(SLEEP_UTIME);
+        // Pause
+        time_pause();
         
         // Signal sempahores
         semaphore_signal(sem_e); // add 1 to count of spaces in buffer

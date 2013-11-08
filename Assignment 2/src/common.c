@@ -10,9 +10,13 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <sys/types.h> // needed for pid_t type
+#include <time.h>
 #include "common.h"
 
 static bool verbose_flag = false;
+
+static bool common_pause_enabled = true;
 
 pid_t fork_child(int alternative, int id, void (*callback)(int))
 {
@@ -66,3 +70,19 @@ void verbose(const char * format, ...)
     }
 }
 
+
+void enable_pause()
+{
+    common_pause_enabled = true;
+}
+
+void disable_pause(void)
+{
+    common_pause_enabled = false;
+}
+void time_pause(void)
+{
+    if (common_pause_enabled) {
+        usleep(SLEEP_UTIME);
+    }
+}
