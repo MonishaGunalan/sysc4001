@@ -10,9 +10,9 @@
 
 #define BUFFER_SHM_KEY "/assign2_buffer"
 #define BUFFER_MAX_VALUES 500
-#define BUFFER_SMALL    2
-#define BUFFER_MEDIUM   5
-#define BUFFER_LARGE   50
+#define BUFFER_SMALL    10
+#define BUFFER_MEDIUM   50
+#define BUFFER_LARGE   100
 
 typedef struct buffer_st {
     int in_index;
@@ -26,6 +26,6 @@ int  buffer_retrieve(int* value);
 int  buffer_add(int value);
 void buffer_close(void);
 void buffer_delete(void);
-void buffer_decrement_producers(void);
+int  buffer_decrement_producers(void);
 
 #endif

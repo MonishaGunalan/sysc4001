@@ -10,17 +10,15 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdbool.h>
-#include <sys/types.h> // needed for pid_t type
 #include <time.h>
 #include "common.h"
 
 static bool verbose_flag = false;
-
 static bool common_pause_enabled = true;
 
 pid_t fork_child(int alternative, int id, void (*callback)(int))
 {
-    int child_pid = fork();
+    pid_t child_pid = fork();
     switch(child_pid) {
         case -1: // Error
             printf("Failed to fork child, alternative=%d, id=%d\n", alternative, id);
@@ -70,7 +68,6 @@ void verbose(const char * format, ...)
     }
 }
 
-
 void enable_pause()
 {
     common_pause_enabled = true;
@@ -83,6 +80,9 @@ void disable_pause(void)
 void time_pause(void)
 {
     if (common_pause_enabled) {
-        usleep(SLEEP_UTIME);
+        int dummy;
+        for(int i = 50000; i <= 0; i--) {
+            dummy = 45 + i; // hopefully stops from getting optimized out
+        }
     }
 }

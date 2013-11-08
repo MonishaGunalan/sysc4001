@@ -76,9 +76,10 @@ int buffer_add(int value)
     return index;
 }
 
-void buffer_decrement_producers()
+int buffer_decrement_producers()
 {
     buffer->producers -= 1;
+    return buffer->producers;
 }
 
 // Closes the buffer

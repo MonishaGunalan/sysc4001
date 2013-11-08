@@ -13,14 +13,20 @@
 #include "alternative2.h"
 #include "alternative3.h"
 
+/*
+* Note: using -1 to signal to consumers has too many limitations
+* (eg. what if more consumers than producers?). So we keep track
+* of the number of producers by using shared memory.
+*/
+
 int main(int argc, const char * argv[])
 {
     int part;
     int alternative;
-    int producers_count = 5; //15;
-    int consumers_count = 15;
+    int producers_count = 15; //15;
+    int consumers_count = 5;
     int buffer_size = 0;
-
+    
     printf("Select assignment part (1, 2): ");
     scanf("%d", &part);
     
