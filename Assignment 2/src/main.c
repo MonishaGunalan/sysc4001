@@ -23,15 +23,13 @@ int main(int argc, const char * argv[])
 {
     int part;
     int alternative;
-    int producers_count = 15; //15;
+    int producers_count = 15;
     int consumers_count = 5;
-    int buffer_size = 0;
     
     printf("Select assignment part (1, 2): ");
     scanf("%d", &part);
     
     if (part == 1) {
-        buffer_size = BUFFER_SMALL;
         enable_verbose();
     } else {
         disable_verbose();

@@ -4,8 +4,8 @@ OBJS    := $(addprefix bin/, $(notdir ${SRCS:.c=.o}))
 #DEPS    := $(addprefix bin/, $(notdir ${SRCS:.c=.dep}))
 XDEPS   := $(wildcard ${DEPS}) 
 
-CCFLAGS = -std=gnu99 -O2 -Wall -Werror -ggdb -MMD
-LDFLAGS = 
+CCFLAGS = -std=gnu99 -Wall -MMD
+LDFLAGS = -pthread -lrt
 LIBS    = 
 
 .PHONY: all clean distclean 
