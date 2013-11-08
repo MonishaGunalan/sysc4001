@@ -27,16 +27,15 @@ To run program:
 Run Instructions
 ----------------
 Select assignment part (1, 2): 
-	Enter < 1 > or < 2 > to choose the assignment.
-	< 1 > to run the producer consumer program using any of the three alternatives
+	Enter < 1 > or < 2 > to choose the assignment part.
+	< 1 > to run the producer consumer program using one of the three alternatives
 	< 2 > to run the performance of the three alternatives
 
-
 Select alternative (1, 2, 3): 
-	Enter < 1 > or < 2 > or < 3 >to choose the respective alternative
+	Enter < 1 > or < 2 > or < 3 > to choose the respective alternative
 	
-
-Run the program again to test a another alternative
+	
+Run the program again to test another alternative
 
 	
 
