@@ -17,6 +17,7 @@
 
 void create_task(void);
 void* process_tasks(void* id_ptr);
+char* priorityLevelToString(int priority_level);
 
 queue_t queue_gold;
 queue_t queue_silver;
@@ -25,7 +26,6 @@ pthread_t threads[THREAD_COUNT];
 pthread_mutex_t mutex;
 
 int silver_count = 0;
-
 
 int main(int argc, const char * argv[])
 {
@@ -43,7 +43,10 @@ int main(int argc, const char * argv[])
 	}
 	
 	// Create mutex
-	pthread_mutex_init(&mutex, NULL);
+	if ( 0 != pthread_mutex_init(&mutex, NULL) ) {
+		printf("Failed to create mutex\n");
+		exit(EXIT_FAILURE);
+	}
 
 	// Start threads
 	for (int i = 0; i < THREAD_COUNT; i++) {
@@ -58,12 +61,18 @@ int main(int argc, const char * argv[])
 	// Wait for threads to finish
 	void *thread_result;
 	for (int i = 0; i < THREAD_COUNT; i++) {
-		pthread_join(threads[i], &thread_result);
+		if ( 0 != pthread_join(threads[i], &thread_result) ) {
+			printf("Failed to wait for thread: %d\n", i);
+		}
 	}
 	printf("All threads finished\n");
 	
 	// Cleanup
-	pthread_mutex_destroy(&mutex);
+	if ( 0 != pthread_mutex_destroy(&mutex) ) {
+		printf("Failed to release mutex. No worries, we are ending anyways.\n");
+	}
+	
+	exit(EXIT_SUCCESS);
 }
 
 void create_task()
@@ -123,14 +132,15 @@ void* process_tasks(void* id_ptr)
 			// Check if there is a gold task
 			queue_dequeue(&queue_gold, &t);
 		} else if (!queue_is_empy(&queue_silver)
-				   && (!queue_is_empy(&queue_bronze) || silver_count < MAX_SILVER_BEFORE_BRONZE)) {
+				   && (queue_is_empy(&queue_bronze) || silver_count < MAX_SILVER_BEFORE_BRONZE)) {
 			silver_count++;
 			queue_dequeue(&queue_silver, &t);
 		} else if (!queue_is_empy(&queue_bronze)) {
 			silver_count = 0;
 			queue_dequeue(&queue_bronze, &t);
 		} else {
-			// Release allocated memory and return
+			// We are donce, so release lock and allocated memory
+			pthread_mutex_unlock(&mutex);
 			free(id_ptr);
 			return NULL;
 		}
@@ -140,11 +150,14 @@ void* process_tasks(void* id_ptr)
 
 		// Process task
 		int process_time;
+		queue_t* queue;
 		switch(t.priority_level) {
 			case PRIORITY_LEVEL_GOLD:
+				queue = &queue_gold;
 				process_time = t.remaining_time;
 				break;
 			case PRIORITY_LEVEL_SILVER:
+				queue = &queue_silver;
 				if (t.remaining_time > MAX_PROCESS_TIME_SILVER) {
 					process_time = MAX_PROCESS_TIME_SILVER;
 				} else {
@@ -153,6 +166,7 @@ void* process_tasks(void* id_ptr)
 				break;
 			case PRIORITY_LEVEL_BRONZE:
 			default:
+				queue = &queue_bronze;
 				if (t.remaining_time > MAX_PROCESS_TIME_BRONZE) {
 					process_time = MAX_PROCESS_TIME_BRONZE;
 				} else {
@@ -160,8 +174,28 @@ void* process_tasks(void* id_ptr)
 				}
 				break;
 		}
+		printf("Thread %d: process_time=%ims, task={id=%i, priority=%s, remaining=%ims} \n", id, process_time, t.id, priorityLevelToString(t.priority_level), t.remaining_time);
 		usleep(process_time * 1000);
+		
+		// Put back in queue if not finished
+		if (t.remaining_time > process_time) {
+			t.remaining_time -= process_time;
+			pthread_mutex_lock(&mutex);
+			queue_enqueue(queue, t);
+			pthread_mutex_unlock(&mutex);
+		}
+
 	}
-	
 }
 
+char* priorityLevelToString(int priority_level) {
+	switch (priority_level) {
+		case PRIORITY_LEVEL_GOLD:
+			return "gold";
+		case PRIORITY_LEVEL_SILVER:
+			return "silver";
+		case PRIORITY_LEVEL_BRONZE:
+		default:
+			return "bronze";
+	}
+}

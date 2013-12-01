@@ -9,7 +9,7 @@
 #define Assignment3_common_h
 
 #define THREAD_COUNT	4
-#define TASK_COUNT		1
+#define TASK_COUNT		30
 #define PRIORITY_MAX	10
 #define PRIORITY_LEVEL_GOLD		2
 #define PRIORITY_LEVEL_SILVER	6
