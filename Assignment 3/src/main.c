@@ -11,39 +11,9 @@
 #include <pthread.h>
 #include <math.h>
 #include <time.h>
-
-#define THREAD_COUNT	4
-#define TASK_COUNT		30
-#define PRIORITY_MAX	10
-#define PRIORITY_LEVEL_GOLD		2
-#define PRIORITY_LEVEL_SILVER	6
-#define PRIORITY_LEVEL_BRONZE	10
-
-#define TIME_GOLD_MIN	50
-#define TIME_GOLD_MAX	120
-#define TIME_SILVER_MIN	500
-#define TIME_SILVER_MAX	5000
-#define TIME_BRONZE_MIN	500
-#define TIME_BRONZE_MAX	5000
-
-#define MAX_PROCESS_TIME_SILVER	50
-#define MAX_PROCESS_TIME_BRONZE	100
-
-#define MAX_SILVER_BEFORE_BRONZE	2
-
-typedef struct task_t {
-	int id;
-	int remaining_time;
-	int total_time;
-	int priority;
-	int priority_level;
-} task_t;
-
-typedef struct queue_t {
-	task_t items[TASK_COUNT];
-	int first_index;
-	int length;
-} queue_t;
+#include <stdbool.h>
+#include "queue.h"
+#include "common.h"
 
 void create_task(void);
 void* process_tasks(void* id_ptr);
@@ -61,6 +31,11 @@ int main(int argc, const char * argv[])
 {
 	// Seed random numbers
 	srand(getpid());
+	
+	// Initialize queues
+	queue_init(&queue_gold);
+	queue_init(&queue_silver);
+	queue_init(&queue_bronze);
 	
 	// Create tasks
 	for (int i = 0; i < TASK_COUNT; i++) {
@@ -112,6 +87,9 @@ void create_task()
 		execution_time = (rand() % (TIME_BRONZE_MAX - TIME_BRONZE_MIN)) + TIME_BRONZE_MIN;
 	}
 	
+	// Round execution time to 10ms granularity
+	execution_time -= execution_time % 10;
+	
 	// Create the task structure
 	t.id = id++;
 	t.priority = priority;
@@ -121,14 +99,11 @@ void create_task()
 
 	// Add to appropriate queue
 	if (PRIORITY_LEVEL_GOLD == priority_level) {
-		queue_gold.items[queue_gold.first_index + queue_gold.length] = t;
-		queue_gold.length++;
+		queue_enqueue(&queue_gold, t);
 	} else if (PRIORITY_LEVEL_SILVER == priority_level) {
-		queue_silver.items[queue_silver.first_index + queue_silver.length] = t;
-		queue_silver.length++;
+		queue_enqueue(&queue_silver, t);
 	} else {
-		queue_bronze.items[queue_bronze.first_index + queue_bronze.length] = t;
-		queue_bronze.length++;
+		queue_enqueue(&queue_bronze, t);
 	}
 }
 
@@ -143,15 +118,17 @@ void* process_tasks(void* id_ptr)
 		// Get the lock
 		pthread_mutex_lock(&mutex);
 
-		if (queue_gold.length > 0) {
+		// Get task from queue
+		if (!queue_is_empy(&queue_gold)) {
 			// Check if there is a gold task
-			
-		} else if (queue_silver.length > 0
-				   && (queue_bronze.length == 0 || silver_count < MAX_SILVER_BEFORE_BRONZE)) {
+			queue_dequeue(&queue_gold, &t);
+		} else if (!queue_is_empy(&queue_silver)
+				   && (!queue_is_empy(&queue_bronze) || silver_count < MAX_SILVER_BEFORE_BRONZE)) {
 			silver_count++;
-			
-		} else if (queue_bronze.length > 0) {
+			queue_dequeue(&queue_silver, &t);
+		} else if (!queue_is_empy(&queue_bronze)) {
 			silver_count = 0;
+			queue_dequeue(&queue_bronze, &t);
 		} else {
 			// Release allocated memory and return
 			free(id_ptr);
@@ -187,5 +164,4 @@ void* process_tasks(void* id_ptr)
 	}
 	
 }
-
 
