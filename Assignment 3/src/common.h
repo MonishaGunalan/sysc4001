@@ -11,7 +11,7 @@
 #include <sys/time.h>
 
 #define THREAD_COUNT	4
-#define TASK_COUNT		10
+#define TASK_COUNT		30
 #define PRIORITY_MAX	10
 #define PRIORITY_LEVEL_GOLD		2
 #define PRIORITY_LEVEL_SILVER	6
