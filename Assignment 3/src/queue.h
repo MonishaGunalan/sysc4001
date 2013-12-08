@@ -25,6 +25,6 @@ typedef struct queue_t {
 void queue_init(queue_t* queue);
 void queue_enqueue(queue_t* queue, task_t task);
 bool queue_dequeue(queue_t* queue, task_t* task);
-bool queue_is_empy(queue_t* queue);
+bool queue_is_empty(queue_t* queue);
 
 #endif

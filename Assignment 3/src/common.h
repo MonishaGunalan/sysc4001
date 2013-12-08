@@ -8,8 +8,10 @@
 #ifndef Assignment3_common_h
 #define Assignment3_common_h
 
+#include <sys/time.h>
+
 #define THREAD_COUNT	4
-#define TASK_COUNT		30
+#define TASK_COUNT		10
 #define PRIORITY_MAX	10
 #define PRIORITY_LEVEL_GOLD		2
 #define PRIORITY_LEVEL_SILVER	6
@@ -22,8 +24,8 @@
 #define TIME_BRONZE_MIN	500
 #define TIME_BRONZE_MAX	5000
 
-#define MAX_PROCESS_TIME_SILVER	50
-#define MAX_PROCESS_TIME_BRONZE	100
+#define MAX_SERVICE_TIME_SILVER	50
+#define MAX_SERVICE_TIME_BRONZE	100
 
 #define MAX_SILVER_BEFORE_BRONZE	2
 
@@ -33,6 +35,7 @@ typedef struct task_t {
 	int total_time;
 	int priority;
 	int priority_level;
+	struct timeval start_time;
 } task_t;
 
 

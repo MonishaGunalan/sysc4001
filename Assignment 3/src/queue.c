@@ -51,7 +51,7 @@ bool queue_dequeue(queue_t* queue, task_t* task)
 	return true;
 }
 
-bool queue_is_empy(queue_t* queue)
+bool queue_is_empty(queue_t* queue)
 {
 	return (queue->first == 0);
 }

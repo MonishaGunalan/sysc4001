@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <math.h>
-#include <time.h>
+#include <sys/time.h>
 #include <stdbool.h>
 #include "queue.h"
 #include "common.h"
@@ -105,6 +105,8 @@ void create_task()
 	t.priority_level = priority_level;
 	t.remaining_time = execution_time;
 	t.total_time = execution_time;
+	gettimeofday(&t.start_time, NULL);
+	printf("Task created: {id=%i, priority_level=%s, total_time=%i}\n", t.id, priorityLevelToString(t.priority_level), t.total_time);
 
 	// Add to appropriate queue
 	if (PRIORITY_LEVEL_GOLD == priority_level) {
@@ -113,33 +115,32 @@ void create_task()
 		queue_enqueue(&queue_silver, t);
 	} else {
 		queue_enqueue(&queue_bronze, t);
-	}
+	}	
 }
 
 void* process_tasks(void* id_ptr)
 {
-	int id = *((int *)id_ptr);
+	int id = *((int *)id_ptr) + 1;
 	printf("Thread started: %i\n", id);
-	
 	task_t t;
-	
+
 	while(1) {
 		// Get the lock
 		pthread_mutex_lock(&mutex);
 
 		// Get task from queue
-		if (!queue_is_empy(&queue_gold)) {
+		if (!queue_is_empty(&queue_gold)) {
 			// Check if there is a gold task
 			queue_dequeue(&queue_gold, &t);
-		} else if (!queue_is_empy(&queue_silver)
-				   && (queue_is_empy(&queue_bronze) || silver_count < MAX_SILVER_BEFORE_BRONZE)) {
+		} else if (!queue_is_empty(&queue_silver)
+				   && (queue_is_empty(&queue_bronze) || silver_count < MAX_SILVER_BEFORE_BRONZE)) {
 			silver_count++;
 			queue_dequeue(&queue_silver, &t);
-		} else if (!queue_is_empy(&queue_bronze)) {
+		} else if (!queue_is_empty(&queue_bronze)) {
 			silver_count = 0;
 			queue_dequeue(&queue_bronze, &t);
 		} else {
-			// We are donce, so release lock and allocated memory
+			// We are done, so release lock and allocated memory
 			pthread_mutex_unlock(&mutex);
 			free(id_ptr);
 			return NULL;
@@ -149,42 +150,50 @@ void* process_tasks(void* id_ptr)
 		pthread_mutex_unlock(&mutex);
 
 		// Process task
-		int process_time;
+		int service_time;
 		queue_t* queue;
 		switch(t.priority_level) {
 			case PRIORITY_LEVEL_GOLD:
 				queue = &queue_gold;
-				process_time = t.remaining_time;
+				service_time = t.remaining_time;
 				break;
 			case PRIORITY_LEVEL_SILVER:
 				queue = &queue_silver;
-				if (t.remaining_time > MAX_PROCESS_TIME_SILVER) {
-					process_time = MAX_PROCESS_TIME_SILVER;
+				if (t.remaining_time > MAX_SERVICE_TIME_SILVER) {
+					service_time = MAX_SERVICE_TIME_SILVER;
 				} else {
-					process_time = t.remaining_time;
+					service_time = t.remaining_time;
 				}
 				break;
 			case PRIORITY_LEVEL_BRONZE:
 			default:
 				queue = &queue_bronze;
-				if (t.remaining_time > MAX_PROCESS_TIME_BRONZE) {
-					process_time = MAX_PROCESS_TIME_BRONZE;
+				if (t.remaining_time > MAX_SERVICE_TIME_BRONZE) {
+					service_time = MAX_SERVICE_TIME_BRONZE;
 				} else {
-					process_time = t.remaining_time;
+					service_time = t.remaining_time;
 				}
 				break;
 		}
-		printf("Thread %d: process_time=%ims, task={id=%i, priority=%s, remaining=%ims} \n", id, process_time, t.id, priorityLevelToString(t.priority_level), t.remaining_time);
-		usleep(process_time * 1000);
+		
+		// Process task
+		printf("Thread %d: service_time=%ims, task={id=%i, priority=%s, remaining=%ims, initial_total=%ims} \n", id, service_time, t.id, priorityLevelToString(t.priority_level), t.remaining_time, t.total_time);
+		usleep(service_time * 1000);
 		
 		// Put back in queue if not finished
-		if (t.remaining_time > process_time) {
-			t.remaining_time -= process_time;
+		if (t.remaining_time > service_time) {
+			t.remaining_time -= service_time;
 			pthread_mutex_lock(&mutex);
 			queue_enqueue(queue, t);
-			pthread_mutex_unlock(&mutex);
+			pthread_mutex_unlock(&mutex);		
+		} else {
+			// Task finished, find turn-around time
+			struct timeval end_time;
+			gettimeofday(&end_time, NULL);
+			
+			int turn_around_time = (int)((end_time.tv_sec - t.start_time.tv_sec) * 1000) + ((end_time.tv_usec - t.start_time.tv_usec) / 1000);
+			printf("---Task Complete: turn_around_time = %dms, task={id=%i, initial_total=%ims}---\n", turn_around_time, t.id, t.total_time);
 		}
-
 	}
 }
 
@@ -199,3 +208,4 @@ char* priorityLevelToString(int priority_level) {
 			return "bronze";
 	}
 }
+

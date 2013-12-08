@@ -2,14 +2,14 @@ TARGET  := assign3
 SRCS    := $(wildcard src/*.c)
 OBJS    := $(addprefix bin/, $(notdir ${SRCS:.c=.o}))
 
-CCFLAGS = -std=gnu99 -Wall -MMD
-LDFLAGS = 
-LIBS    = 
+CC     = gcc
+CCFLAGS = -std=gnu99 -Wall -MMD -pthread
+LDFLAGS = -pthread
 
 all:: ${TARGET} 
 
 ${TARGET}: ${OBJS} 
-	${CC} ${LDFLAGS} -o bin/$@ $^ ${LIBS} 
+	${CC} ${LDFLAGS} -o bin/$@ $^ 
 
 ${OBJS}: bin/%.o: src/%.c
 	${CC} ${CCFLAGS} -o $@ -c $< 
